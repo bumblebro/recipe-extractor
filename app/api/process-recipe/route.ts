@@ -7,7 +7,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 const ANIMATION_TYPES = [
   "cutting", // for chopping, slicing, dicing
   "stirring", // for mixing, stirring
-  "waiting", // for resting, marinating, cooling
+  "waiting", // for resting, marinating
   "heating", // for cooking, boiling, simmering
   "mixing", // for combining ingredients
   "pouring", // for adding liquids
@@ -19,6 +19,17 @@ const ANIMATION_TYPES = [
   "peeling", // for fruits, vegetables
   "folding", // for batter, dough
   "sauteing", // for stir-frying, pan-frying
+  "cooling", // for cooling down food, chilling
+  "blending", // for pureeing, smoothies
+  "steaming", // for vegetables, dumplings
+  "mashing", // for potatoes, beans
+  "straining", // for pasta, liquids
+  "measuring", // for measuring ingredients
+  "sifting", // for flour, dry ingredients
+  "beating", // for eggs, cream
+  "crushing", // for garlic, nuts, cookies
+  "shredding", // for vegetables, meat
+  "juicing", // for citrus fruits
 ] as const;
 
 type AnimationType = (typeof ANIMATION_TYPES)[number];
@@ -93,7 +104,7 @@ Instruction Parsing Rules:
 Available animation types:
 - cutting: for chopping, slicing, dicing
 - stirring: for mixing, stirring
-- waiting: for resting, marinating, cooling
+- waiting: for resting, marinating
 - heating: for cooking, boiling, simmering
 - mixing: for combining ingredients
 - pouring: for adding liquids
@@ -122,7 +133,7 @@ Return an array of JSON objects with the following structure for each instructio
     ],
     "temperature": number (optional),
     "temperatureUnit": "C" | "F" (optional),
-    "animationType": "cutting" | "stirring" | "waiting" | "heating" | "mixing" | "pouring" | "seasoning" | "whisking" | "kneading" | "rolling" | "grating" | "peeling" | "folding" | "sauteing" (optional),
+    "animationType": "cutting" | "stirring" | "waiting" | "heating" | "mixing" | "pouring" | "seasoning" | "whisking" | "kneading" | "rolling" | "grating" | "peeling" | "folding" | "sauteing" | "cooling" | "blending" | "steaming" | "mashing" | "straining" | "measuring" | "sifting" | "beating" | "crushing" | "shredding" | "juicing" (optional),
     "notes": string (optional)
   }
 ]`;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import CookingAnimation3D from "./CookingAnimation3D";
+import CookingAnimationLottie from "./CookingAnimationLottie";
 
 interface Ingredient {
   name: string;
@@ -30,7 +30,18 @@ interface ProcessedInstruction {
     | "grating"
     | "peeling"
     | "folding"
-    | "sauteing";
+    | "sauteing"
+    | "cooling"
+    | "blending"
+    | "steaming"
+    | "mashing"
+    | "straining"
+    | "measuring"
+    | "sifting"
+    | "beating"
+    | "crushing"
+    | "shredding"
+    | "juicing";
   notes?: string;
 }
 
@@ -71,7 +82,6 @@ export default function CookingAnimation({
         setProcessedSteps(
           instructions.map((instruction) => ({
             action: instruction,
-            animationType: determineAnimationType(instruction),
           }))
         );
       } finally {
@@ -325,7 +335,7 @@ export default function CookingAnimation({
         <div className="bg-white p-8 rounded-xl border border-blue-100 shadow-lg">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-shrink-0 bg-blue-50 p-4 rounded-xl h-48 w-48 relative">
-              <CookingAnimation3D
+              <CookingAnimationLottie
                 animationType={
                   processedSteps[currentStep]?.animationType || "waiting"
                 }
@@ -633,76 +643,4 @@ export default function CookingAnimation({
       </div>
     </div>
   );
-}
-
-function determineAnimationType(
-  instruction: string
-): ProcessedInstruction["animationType"] {
-  const lowerInstruction = instruction.toLowerCase();
-
-  if (
-    lowerInstruction.includes("cut") ||
-    lowerInstruction.includes("chop") ||
-    lowerInstruction.includes("slice")
-  ) {
-    return "cutting";
-  }
-  if (lowerInstruction.includes("stir") || lowerInstruction.includes("mix")) {
-    return "stirring";
-  }
-  if (
-    lowerInstruction.includes("heat") ||
-    lowerInstruction.includes("cook") ||
-    lowerInstruction.includes("boil")
-  ) {
-    return "heating";
-  }
-  if (lowerInstruction.includes("pour") || lowerInstruction.includes("add")) {
-    return "pouring";
-  }
-  if (
-    lowerInstruction.includes("season") ||
-    lowerInstruction.includes("salt") ||
-    lowerInstruction.includes("pepper")
-  ) {
-    return "seasoning";
-  }
-  if (lowerInstruction.includes("whisk") || lowerInstruction.includes("beat")) {
-    return "whisking";
-  }
-  if (
-    lowerInstruction.includes("knead") ||
-    lowerInstruction.includes("dough")
-  ) {
-    return "kneading";
-  }
-  if (
-    lowerInstruction.includes("roll") ||
-    lowerInstruction.includes("pastry")
-  ) {
-    return "rolling";
-  }
-  if (
-    lowerInstruction.includes("grate") ||
-    lowerInstruction.includes("shred")
-  ) {
-    return "grating";
-  }
-  if (lowerInstruction.includes("peel") || lowerInstruction.includes("skin")) {
-    return "peeling";
-  }
-  if (
-    lowerInstruction.includes("fold") ||
-    lowerInstruction.includes("incorporate")
-  ) {
-    return "folding";
-  }
-  if (
-    lowerInstruction.includes("saute") ||
-    lowerInstruction.includes("fry") ||
-    lowerInstruction.includes("pan-fry")
-  ) {
-    return "sauteing";
-  }
-  return "waiting";
 }
