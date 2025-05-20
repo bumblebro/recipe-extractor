@@ -33,6 +33,7 @@ const animationMap: Record<string, string> = {
   crushing: "/animations/crushing.json",
   shredding: "/animations/shredding.json",
   juicing: "/animations/juicing.json",
+  serving: "/animations/serving.json",
 };
 
 export default function CookingAnimationLottie({

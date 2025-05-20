@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@keyframes pause {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-pause {
+  animation: pause 1s infinite;
+}

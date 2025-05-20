@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import CookingAnimationGif from "./CookingAnimationGif";
 import CookingAnimationLottie from "./CookingAnimationLottie";
 
 interface Ingredient {
@@ -41,7 +42,8 @@ interface ProcessedInstruction {
     | "beating"
     | "crushing"
     | "shredding"
-    | "juicing";
+    | "juicing"
+    | "serving";
   notes?: string;
 }
 
@@ -335,6 +337,7 @@ export default function CookingAnimation({
         <div className="bg-white p-8 rounded-xl border border-blue-100 shadow-lg">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-shrink-0 bg-blue-50 p-4 rounded-xl h-48 w-48 relative">
+              {/* <CookingAnimationGif */}
               <CookingAnimationLottie
                 animationType={
                   processedSteps[currentStep]?.animationType || "waiting"

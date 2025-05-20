@@ -30,6 +30,7 @@ const ANIMATION_TYPES = [
   "crushing", // for garlic, nuts, cookies
   "shredding", // for vegetables, meat
   "juicing", // for citrus fruits
+  "serving", // for plating and serving food
 ] as const;
 
 type AnimationType = (typeof ANIMATION_TYPES)[number];
@@ -133,7 +134,7 @@ Return an array of JSON objects with the following structure for each instructio
     ],
     "temperature": number (optional),
     "temperatureUnit": "C" | "F" (optional),
-    "animationType": "cutting" | "stirring" | "waiting" | "heating" | "mixing" | "pouring" | "seasoning" | "whisking" | "kneading" | "rolling" | "grating" | "peeling" | "folding" | "sauteing" | "cooling" | "blending" | "steaming" | "mashing" | "straining" | "measuring" | "sifting" | "beating" | "crushing" | "shredding" | "juicing" (optional),
+    "animationType": "cutting" | "stirring" | "waiting" | "heating" | "mixing" | "pouring" | "seasoning" | "whisking" | "kneading" | "rolling" | "grating" | "peeling" | "folding" | "sauteing" | "cooling" | "blending" | "steaming" | "mashing" | "straining" | "measuring" | "sifting" | "beating" | "crushing" | "shredding" | "juicing" | "serving" (optional),
     "notes": string (optional)
   }
 ]`;
@@ -294,6 +295,13 @@ function determineAnimationType(
     lowerInstruction.includes("pan-fry")
   ) {
     return "sauteing";
+  }
+  if (
+    lowerInstruction.includes("serve") ||
+    lowerInstruction.includes("plate") ||
+    lowerInstruction.includes("dish")
+  ) {
+    return "serving";
   }
 
   return undefined;
