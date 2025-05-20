@@ -117,6 +117,18 @@ Available animation types:
 - peeling: for fruits, vegetables
 - folding: for batter, dough
 - sauteing: for stir-frying, pan-frying
+- cooling: for cooling down food, chilling
+- blending: for pureeing, smoothies
+- steaming: for vegetables, dumplings
+- mashing: for potatoes, beans
+- straining: for pasta, liquids
+- measuring: for measuring ingredients
+- sifting: for flour, dry ingredients
+- beating: for eggs, cream
+- crushing: for garlic, nuts, cookies
+- shredding: for vegetables, meat
+- juicing: for citrus fruits
+- serving: for plating and serving food
 
 Return an array of JSON objects with the following structure for each instruction:
 [
