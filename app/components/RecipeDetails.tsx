@@ -26,39 +26,43 @@ interface RecipeDetailsProps {
 
 export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
-      <h2 className="text-3xl font-bold text-gray-900 mb-4">
+    <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-4 sm:p-8">
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
         {recipeData.name}
       </h2>
 
       {recipeData.description && (
-        <p className="text-gray-600 mb-6">{recipeData.description}</p>
+        <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
+          {recipeData.description}
+        </p>
       )}
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
         <div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
             Ingredients
           </h3>
           <ul className="space-y-2">
             {recipeData.ingredients.map((ingredient, index) => (
               <li key={index} className="flex items-start">
-                <span className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3"></span>
-                <span className="text-gray-700">{ingredient}</span>
+                <span className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                <span className="text-sm sm:text-base text-gray-700">
+                  {ingredient}
+                </span>
               </li>
             ))}
           </ul>
         </div>
 
         <div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
             Recipe Details
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {recipeData.yield && (
               <div className="flex items-center gap-2">
                 <svg
-                  className="w-5 h-5 text-gray-500"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -70,7 +74,7 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                   />
                 </svg>
-                <span className="text-gray-700">
+                <span className="text-sm sm:text-base text-gray-700">
                   Servings: {recipeData.yield}
                 </span>
               </div>
@@ -78,7 +82,7 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
             {recipeData.prepTime && (
               <div className="flex items-center gap-2">
                 <svg
-                  className="w-5 h-5 text-gray-500"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -90,7 +94,7 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span className="text-gray-700">
+                <span className="text-sm sm:text-base text-gray-700">
                   Prep Time: {recipeData.prepTime}
                 </span>
               </div>
@@ -98,7 +102,7 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
             {recipeData.cookTime && (
               <div className="flex items-center gap-2">
                 <svg
-                  className="w-5 h-5 text-gray-500"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -110,7 +114,7 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span className="text-gray-700">
+                <span className="text-sm sm:text-base text-gray-700">
                   Cook Time: {recipeData.cookTime}
                 </span>
               </div>
@@ -118,7 +122,7 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
             {recipeData.category && (
               <div className="flex items-center gap-2">
                 <svg
-                  className="w-5 h-5 text-gray-500"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -130,7 +134,7 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
                     d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
                   />
                 </svg>
-                <span className="text-gray-700">
+                <span className="text-sm sm:text-base text-gray-700">
                   Category: {recipeData.category}
                 </span>
               </div>
@@ -138,7 +142,7 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
             {recipeData.cuisine && (
               <div className="flex items-center gap-2">
                 <svg
-                  className="w-5 h-5 text-gray-500"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -150,7 +154,7 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
                     d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span className="text-gray-700">
+                <span className="text-sm sm:text-base text-gray-700">
                   Cuisine: {recipeData.cuisine}
                 </span>
               </div>
@@ -160,39 +164,39 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
       </div>
 
       {recipeData.nutrition && Object.keys(recipeData.nutrition).length > 0 && (
-        <div className="mt-8">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="mt-6 sm:mt-8">
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
             Nutrition Information
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {recipeData.nutrition.calories && (
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-sm text-gray-500">Calories</p>
-                <p className="text-lg font-semibold">
+              <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                <p className="text-xs sm:text-sm text-gray-500">Calories</p>
+                <p className="text-base sm:text-lg font-semibold">
                   {recipeData.nutrition.calories}
                 </p>
               </div>
             )}
             {recipeData.nutrition.proteinContent && (
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-sm text-gray-500">Protein</p>
-                <p className="text-lg font-semibold">
+              <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                <p className="text-xs sm:text-sm text-gray-500">Protein</p>
+                <p className="text-base sm:text-lg font-semibold">
                   {recipeData.nutrition.proteinContent}
                 </p>
               </div>
             )}
             {recipeData.nutrition.fatContent && (
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-sm text-gray-500">Fat</p>
-                <p className="text-lg font-semibold">
+              <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                <p className="text-xs sm:text-sm text-gray-500">Fat</p>
+                <p className="text-base sm:text-lg font-semibold">
                   {recipeData.nutrition.fatContent}
                 </p>
               </div>
             )}
             {recipeData.nutrition.carbohydrateContent && (
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-sm text-gray-500">Carbs</p>
-                <p className="text-lg font-semibold">
+              <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                <p className="text-xs sm:text-sm text-gray-500">Carbs</p>
+                <p className="text-base sm:text-lg font-semibold">
                   {recipeData.nutrition.carbohydrateContent}
                 </p>
               </div>
@@ -201,17 +205,22 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
         </div>
       )}
 
-      <div className="mt-8">
-        <h3 className="text-xl font-semibold text-gray-900 mb-4">
+      <div className="mt-6 sm:mt-8">
+        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
           Instructions
         </h3>
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {recipeData.instructions.map((instruction, index) => (
-            <div key={index} className="flex gap-4 bg-gray-50 p-4 rounded-lg">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-semibold">
+            <div
+              key={index}
+              className="flex gap-3 sm:gap-4 bg-gray-50 p-3 sm:p-4 rounded-lg"
+            >
+              <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-semibold text-sm sm:text-base">
                 {index + 1}
               </div>
-              <p className="text-gray-700">{instruction}</p>
+              <p className="text-sm sm:text-base text-gray-700">
+                {instruction}
+              </p>
             </div>
           ))}
         </div>

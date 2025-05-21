@@ -1,39 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
+import { AnimationType } from "../../types/animations";
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-
-const ANIMATION_TYPES = [
-  "cutting", // for chopping, slicing, dicing
-  "stirring", // for mixing, stirring
-  "waiting", // for resting, marinating
-  "heating", // for cooking, boiling, simmering
-  "mixing", // for combining ingredients
-  "pouring", // for adding liquids
-  "seasoning", // for adding spices, salt, etc.
-  "whisking", // for beating, whisking
-  "kneading", // for working with dough
-  "rolling", // for pastry, pasta
-  "grating", // for cheese, vegetables
-  "peeling", // for fruits, vegetables
-  "folding", // for batter, dough
-  "sauteing", // for stir-frying, pan-frying
-  "cooling", // for cooling down food, chilling
-  "blending", // for pureeing, smoothies
-  "steaming", // for vegetables, dumplings
-  "mashing", // for potatoes, beans
-  "straining", // for pasta, liquids
-  "measuring", // for measuring ingredients
-  "sifting", // for flour, dry ingredients
-  "beating", // for eggs, cream
-  "crushing", // for garlic, nuts, cookies
-  "shredding", // for vegetables, meat
-  "juicing", // for citrus fruits
-  "serving", // for plating and serving food
-] as const;
-
-type AnimationType = (typeof ANIMATION_TYPES)[number];
 
 interface Ingredient {
   name: string;
@@ -45,7 +15,7 @@ interface Ingredient {
 interface ProcessedInstruction {
   stepNumber: number;
   totalSteps: number;
-  ingredients: Ingredient[];
+  ingredients?: Ingredient[];
   action: string;
   duration?: number;
   durationUnit?: "seconds" | "minutes" | "hours";
@@ -189,7 +159,7 @@ export async function POST(request: Request) {
 
       // Validate each instruction has the required fields
       const validatedInstructions = parsedInstructions.map(
-        (instruction: any) => {
+        (instruction: ProcessedInstruction) => {
           if (typeof instruction.action !== "string") {
             throw new Error("Each instruction must have an 'action' field");
           }

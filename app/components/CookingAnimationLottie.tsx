@@ -6,6 +6,19 @@ interface CookingAnimationLottieProps {
   isPaused: boolean;
 }
 
+interface AnimationData {
+  v: string;
+  fr: number;
+  ip: number;
+  op: number;
+  w: number;
+  h: number;
+  nm: string;
+  ddd: number;
+  assets: unknown[];
+  layers: unknown[];
+}
+
 // Map animation types to their corresponding Lottie JSON files
 const animationMap: Record<string, string> = {
   cutting: "/animations/cutting.json",
@@ -40,7 +53,9 @@ export default function CookingAnimationLottie({
   animationType,
   isPaused,
 }: CookingAnimationLottieProps) {
-  const [animationData, setAnimationData] = useState<any>(null);
+  const [animationData, setAnimationData] = useState<AnimationData | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

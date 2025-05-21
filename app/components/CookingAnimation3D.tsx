@@ -1,20 +1,8 @@
 import { useRef, useState, useEffect } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import {
-  OrbitControls,
-  useGLTF,
-  Environment,
-  Float,
-  Text,
-  Sparkles,
-  useTexture,
-  Trail,
-  useHelper,
-  Instances,
-  Instance,
-} from "@react-three/drei";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, Environment, Float, Sparkles } from "@react-three/drei";
 import * as THREE from "three";
-import { Physics, useBox, usePlane } from "@react-three/cannon";
+import { Physics } from "@react-three/cannon";
 
 interface CookingAnimation3DProps {
   animationType: string;
@@ -30,15 +18,6 @@ interface Bubble {
 // Add physics-based particle system
 function ParticleSystem({ count = 100, color = "#ffffff" }) {
   const particles = useRef<THREE.InstancedMesh>(null);
-  const [positions] = useState(() => {
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 2;
-      pos[i * 3 + 1] = Math.random() * 2;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 2;
-    }
-    return pos;
-  });
 
   useFrame((state) => {
     if (!particles.current) return;
@@ -65,7 +44,6 @@ function WhiskingAnimation({ isPaused }: { isPaused: boolean }) {
   const bowlRef = useRef<THREE.Mesh>(null);
   const [rotation, setRotation] = useState(0);
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
-  const { viewport } = useThree();
 
   useFrame((state) => {
     if (!isPaused && whiskRef.current && bowlRef.current) {
@@ -935,27 +913,22 @@ export default function CookingAnimation3D({
   const playStirSound = useSoundEffect("/sounds/stir.mp3");
 
   useEffect(() => {
-    if (!isPaused) {
-      try {
-        switch (animationType) {
-          case "whisking":
-            playWhiskSound();
-            break;
-          case "cutting":
-            playCutSound();
-            break;
-          case "pouring":
-            playPourSound();
-            break;
-          case "stirring":
-            playStirSound();
-            break;
-        }
-      } catch (error) {
-        console.warn("Error playing animation sound:", error);
-      }
+    if (animationType === "cutting") {
+      playCutSound();
+    } else if (animationType === "pouring") {
+      playPourSound();
+    } else if (animationType === "stirring") {
+      playStirSound();
+    } else if (animationType === "whisking") {
+      playWhiskSound();
     }
-  }, [animationType, isPaused]);
+  }, [
+    animationType,
+    playCutSound,
+    playPourSound,
+    playStirSound,
+    playWhiskSound,
+  ]);
 
   const getAnimationComponent = () => {
     switch (animationType) {
