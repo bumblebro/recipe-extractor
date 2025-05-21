@@ -71,7 +71,16 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
 
   // Extract the number from the yield string (e.g., "4 servings" -> 4)
   const originalYield = useMemo(() => {
-    const match = recipeData.yield?.match(/\d+/);
+    if (!recipeData.yield) return 1;
+
+    // Handle both string and array cases
+    const yieldStr = Array.isArray(recipeData.yield)
+      ? recipeData.yield[0]
+      : recipeData.yield;
+
+    if (typeof yieldStr !== "string") return 1;
+
+    const match = yieldStr.match(/\d+/);
     return match ? parseInt(match[0]) : 1;
   }, [recipeData.yield]);
 
@@ -87,7 +96,7 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
       const matches = ingredient.match(/(\d+(?:\.\d+)?)\s*([a-zA-Z]+)?/);
       if (!matches) return ingredient;
 
-      const [_, quantity, unit] = matches;
+      const quantity = matches[1]; // First capture group is the quantity
       const scaledQuantity = parseFloat(quantity) * scaleFactor;
 
       // Format the scaled quantity (remove trailing zeros)
@@ -321,10 +330,13 @@ export default function RecipeDetails({ recipeData }: RecipeDetailsProps) {
               </div>
             )}
 
-            {recipeData.keywords && recipeData.keywords.length > 0 && (
+            {recipeData.keywords && (
               <div className="pt-4 border-t border-gray-200">
                 <div className="flex flex-wrap gap-2">
-                  {recipeData.keywords.map((keyword, index) => (
+                  {(Array.isArray(recipeData.keywords)
+                    ? recipeData.keywords
+                    : [recipeData.keywords]
+                  ).map((keyword, index) => (
                     <span
                       key={index}
                       className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"

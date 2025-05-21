@@ -143,10 +143,8 @@ export default function Home() {
           />
         </div>
       )}
-      
-      {recipeData && <RecipeDetails recipeData={recipeData} />}
 
-    
+      {recipeData && <RecipeDetails recipeData={recipeData} />}
 
       <div className="mt-12 bg-white rounded-xl shadow-lg p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">How It Works</h2>

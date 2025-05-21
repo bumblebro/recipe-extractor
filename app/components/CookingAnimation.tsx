@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { motion } from "framer-motion";
 import CookingAnimationLottie from "./CookingAnimationLottie";
-import { useSound } from "use-sound";
 import { AudioNotifications } from "./AudioNotifications";
 
 interface Ingredient {
@@ -74,18 +73,22 @@ export default function CookingAnimation({
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const lastUpdateTimeRef = useRef<number>(Date.now());
 
-  const loadingMessages = [
-    "Setting up the kitchen...",
-    "Gathering ingredients...",
-    "Preheating the oven...",
-    "Sharpening knives...",
-    "Washing vegetables...",
-    "Measuring ingredients...",
-    "Organizing cooking tools...",
-    "Reading recipe carefully...",
-    "Preparing work station...",
-    "Getting everything ready...",
-  ];
+  // Memoize loading messages to prevent recreation on every render
+  const loadingMessages = useMemo(
+    () => [
+      "Setting up the kitchen...",
+      "Gathering ingredients...",
+      "Preheating the oven...",
+      "Sharpening knives...",
+      "Washing vegetables...",
+      "Measuring ingredients...",
+      "Organizing cooking tools...",
+      "Reading recipe carefully...",
+      "Preparing work station...",
+      "Getting everything ready...",
+    ],
+    []
+  );
 
   useEffect(() => {
     if (isProcessing) {
@@ -97,7 +100,7 @@ export default function CookingAnimation({
 
       return () => clearInterval(interval);
     }
-  }, [isProcessing]);
+  }, [isProcessing, loadingMessages]);
 
   useEffect(() => {
     const processInstructions = async () => {
@@ -110,7 +113,16 @@ export default function CookingAnimation({
           },
           body: JSON.stringify({ instructions }),
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
+        if (!data || !data.processedInstructions) {
+          throw new Error("Invalid response format from server");
+        }
+
         setProcessedSteps(data.processedInstructions);
       } catch (error) {
         console.error("Error processing instructions:", error);
@@ -143,13 +155,31 @@ export default function CookingAnimation({
     }
   };
 
-  const calculateProgress = () => {
+  const calculateProgress = useCallback(() => {
     if (timeRemaining === null) return 0;
     const step = processedSteps[currentStep];
     const totalDuration = getDurationInSeconds(step);
     if (!totalDuration) return 0;
     return ((totalDuration - timeRemaining) / totalDuration) * 100;
-  };
+  }, [timeRemaining, currentStep, processedSteps]);
+
+  const calculateOverallProgress = useCallback(() => {
+    const completedCount = Math.min(
+      completedSteps.length,
+      processedSteps.length
+    );
+    return (completedCount / processedSteps.length) * 100;
+  }, [completedSteps.length, processedSteps.length]);
+
+  // Memoize the progress calculation
+  const progress = useMemo(() => {
+    return calculateProgress();
+  }, [calculateProgress]);
+
+  // Memoize the overall progress
+  const overallProgress = useMemo(() => {
+    return calculateOverallProgress();
+  }, [calculateOverallProgress]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -244,28 +274,60 @@ export default function CookingAnimation({
   };
 
   const handleNextStep = () => {
-    if (currentStep < processedSteps.length - 1) {
-      setIsStepComplete(true);
-      setCompletedSteps((prev) => [...prev, currentStep]);
-      setTimeout(() => {
-        setCurrentStep((prev) => prev + 1);
-        setIsStepComplete(false);
-        onStepComplete(currentStep);
-        // Reset timer for the new step
-        const duration = getDurationInSeconds(processedSteps[currentStep + 1]);
-        setTimeRemaining(duration || null);
-      }, 100);
-    }
-  };
-
-  const handleCompleteStep = () => {
-    setIsStepComplete(true);
-    // Don't set isTimerComplete to avoid playing the timer completion sound
+    // Stop any ongoing timer
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
+
+    // Add current step to completed steps if not already completed
+    setCompletedSteps((prev) => {
+      if (!prev.includes(currentStep)) {
+        return [...prev, currentStep];
+      }
+      return prev;
+    });
+
+    // If we're at the last step, mark it as complete and return
+    if (currentStep === processedSteps.length - 1) {
+      setIsStepComplete(true);
+      onStepComplete(currentStep);
+      return;
+    }
+
+    // Update states in a single batch
+    const nextStep = currentStep + 1;
+    const duration = getDurationInSeconds(processedSteps[nextStep]);
+
+    // Use a single state update to prevent flickering
+    setCurrentStep(nextStep);
+    setTimeRemaining(duration || null);
+    setIsStepComplete(false);
+    setIsTimerComplete(false);
+    onStepComplete(currentStep);
+  };
+
+  const handleCompleteStep = () => {
+    // Stop any ongoing timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
+    // Update states in a single batch
+    setIsStepComplete(true);
     setTimeRemaining(0);
+    setCompletedSteps((prev) => {
+      if (!prev.includes(currentStep)) {
+        return [...prev, currentStep];
+      }
+      return prev;
+    });
+
+    // If this is the last step, call onStepComplete
+    if (currentStep === processedSteps.length - 1) {
+      onStepComplete(currentStep);
+    }
   };
 
   const handlePreviousStep = () => {
@@ -274,21 +336,19 @@ export default function CookingAnimation({
     }
   };
 
-  const handleTimerComplete = () => {
-    setIsTimerComplete(true);
-    setTimeout(() => {
-      setIsTimerComplete(false);
-    }, 100);
-  };
-
   const togglePause = () => {
     setIsPaused((prev) => !prev);
   };
 
-  // Calculate overall progress
-  const calculateOverallProgress = () => {
-    return (completedSteps.length / processedSteps.length) * 100;
-  };
+  // Memoize the current step's data to prevent unnecessary re-renders
+  const currentStepData = useMemo(() => {
+    return processedSteps[currentStep];
+  }, [processedSteps, currentStep]);
+
+  // Memoize the formatted time
+  const formattedTimeRemaining = useMemo(() => {
+    return timeRemaining !== null ? formatTime(timeRemaining) : null;
+  }, [timeRemaining]);
 
   if (error) {
     return (
@@ -347,24 +407,23 @@ export default function CookingAnimation({
               Recipe Progress
             </h3>
             <span className="text-sm font-medium text-gray-600">
-              {completedSteps.length} of {processedSteps.length} steps completed
+              {Math.min(completedSteps.length, processedSteps.length)} of{" "}
+              {processedSteps.length} steps completed
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
             <div
               className="bg-blue-500 h-2.5 rounded-full transition-all duration-500"
-              style={{ width: `${calculateOverallProgress()}%` }}
+              style={{ width: `${overallProgress}%` }}
               role="progressbar"
-              aria-valuenow={Math.round(calculateOverallProgress())}
+              aria-valuenow={Math.round(overallProgress)}
               aria-valuemin={0}
               aria-valuemax={100}
-              aria-label={`Recipe progress: ${Math.round(
-                calculateOverallProgress()
-              )}%`}
+              aria-label={`Recipe progress: ${Math.round(overallProgress)}%`}
             />
           </div>
           <div className="flex justify-end text-sm text-gray-600">
-            <span>{Math.round(calculateOverallProgress())}% Complete</span>
+            <span>{Math.round(overallProgress)}% Complete</span>
           </div>
         </div>
 
@@ -407,28 +466,56 @@ export default function CookingAnimation({
                   currentStep === processedSteps.length - 1 ||
                   (timeRemaining !== null && !isStepComplete)
                 }
-                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors shadow-md flex items-center justify-center gap-2 text-sm sm:text-base"
+                className={`px-4 sm:px-6 py-2 sm:py-3 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-2 text-sm sm:text-base ${
+                  currentStep === processedSteps.length - 1
+                    ? "bg-green-500 hover:bg-green-600"
+                    : "bg-blue-500 hover:bg-blue-600"
+                }`}
                 aria-label={
                   timeRemaining !== null && !isStepComplete
                     ? "Waiting for step to complete"
+                    : currentStep === processedSteps.length - 1
+                    ? "Complete recipe"
                     : "Go to next step"
                 }
               >
-                <span className="hidden sm:inline">Next Step</span>
-                <span className="sm:hidden">Next</span>
-                <svg
-                  className="w-4 h-4 sm:w-5 sm:h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+                {currentStep === processedSteps.length - 1 ? (
+                  <>
+                    <span className="hidden sm:inline">Complete Recipe</span>
+                    <span className="sm:hidden">Complete</span>
+                    <svg
+                      className="w-4 h-4 sm:w-5 sm:h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </>
+                ) : (
+                  <>
+                    <span className="hidden sm:inline">Next Step</span>
+                    <span className="sm:hidden">Next</span>
+                    <svg
+                      className="w-4 h-4 sm:w-5 sm:h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -479,9 +566,9 @@ export default function CookingAnimation({
                   )}
                 </div>
                 <h3 className="text-xl sm:text-2xl font-semibold text-gray-800">
-                  {processedSteps[currentStep]?.action}
+                  {currentStepData?.action}
                 </h3>
-                {processedSteps[currentStep]?.ingredients && (
+                {currentStepData?.ingredients && (
                   <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
                     <h4 className="text-xs sm:text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
                       <svg
@@ -500,36 +587,34 @@ export default function CookingAnimation({
                       Ingredients Needed
                     </h4>
                     <ul className="space-y-1.5 sm:space-y-2">
-                      {processedSteps[currentStep].ingredients.map(
-                        (ingredient, index) => (
-                          <li
-                            key={index}
-                            className="text-sm sm:text-base text-gray-700 flex items-center gap-2"
-                          >
-                            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full flex-shrink-0"></span>
-                            {ingredient.quantity && (
-                              <span className="font-medium">
-                                {ingredient.quantity}
-                              </span>
-                            )}
-                            {ingredient.unit && (
-                              <span className="text-gray-500 ml-1">
-                                {ingredient.unit}
-                              </span>
-                            )}
-                            <span className="ml-1">{ingredient.name}</span>
-                            {ingredient.preparation && (
-                              <span className="text-gray-500 ml-1">
-                                ({ingredient.preparation})
-                              </span>
-                            )}
-                          </li>
-                        )
-                      )}
+                      {currentStepData.ingredients.map((ingredient, index) => (
+                        <li
+                          key={index}
+                          className="text-sm sm:text-base text-gray-700 flex items-center gap-2"
+                        >
+                          <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full flex-shrink-0"></span>
+                          {ingredient.quantity && (
+                            <span className="font-medium">
+                              {ingredient.quantity}
+                            </span>
+                          )}
+                          {ingredient.unit && (
+                            <span className="text-gray-500 ml-1">
+                              {ingredient.unit}
+                            </span>
+                          )}
+                          <span className="ml-1">{ingredient.name}</span>
+                          {ingredient.preparation && (
+                            <span className="text-gray-500 ml-1">
+                              ({ingredient.preparation})
+                            </span>
+                          )}
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 )}
-                {processedSteps[currentStep]?.temperature && (
+                {currentStepData?.temperature && (
                   <div className="flex items-center gap-2 text-gray-700 bg-gray-50 p-2 sm:p-3 rounded-lg">
                     <svg
                       className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 flex-shrink-0"
@@ -545,12 +630,12 @@ export default function CookingAnimation({
                       />
                     </svg>
                     <span className="text-sm sm:text-base font-medium">
-                      {processedSteps[currentStep].temperature}°
-                      {processedSteps[currentStep].temperatureUnit}
+                      {currentStepData.temperature}°
+                      {currentStepData.temperatureUnit}
                     </span>
                   </div>
                 )}
-                {processedSteps[currentStep]?.notes && (
+                {currentStepData?.notes && (
                   <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
                     <p className="text-sm sm:text-base text-blue-700 flex items-start gap-2">
                       <svg
@@ -566,7 +651,7 @@ export default function CookingAnimation({
                           d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      <span>{processedSteps[currentStep].notes}</span>
+                      <span>{currentStepData.notes}</span>
                     </p>
                   </div>
                 )}
@@ -575,9 +660,7 @@ export default function CookingAnimation({
                     <div className="flex items-center gap-3 sm:gap-4">
                       <div
                         className="text-2xl sm:text-4xl font-mono bg-gray-100 px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-inner flex items-center gap-2"
-                        aria-label={`Time remaining: ${formatTime(
-                          timeRemaining
-                        )}`}
+                        aria-label={`Time remaining: ${formattedTimeRemaining}`}
                       >
                         <svg
                           className="w-4 h-4 sm:w-6 sm:h-6 text-gray-500 flex-shrink-0"
@@ -592,7 +675,7 @@ export default function CookingAnimation({
                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
-                        {formatTime(timeRemaining)}
+                        {formattedTimeRemaining}
                       </div>
                       <button
                         onClick={togglePause}
@@ -666,14 +749,12 @@ export default function CookingAnimation({
                     <div className="mt-2 w-full bg-gray-200 rounded-full h-2.5">
                       <div
                         className="bg-blue-500 h-2.5 rounded-full transition-all duration-1000 ease-linear"
-                        style={{ width: `${calculateProgress()}%` }}
+                        style={{ width: `${progress}%` }}
                         role="progressbar"
-                        aria-valuenow={Math.round(calculateProgress())}
+                        aria-valuenow={Math.round(progress)}
                         aria-valuemin={0}
                         aria-valuemax={100}
-                        aria-label={`Step progress: ${Math.round(
-                          calculateProgress()
-                        )}%`}
+                        aria-label={`Step progress: ${Math.round(progress)}%`}
                       />
                     </div>
                   </div>
@@ -758,7 +839,7 @@ export default function CookingAnimation({
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    {formatTime(timeRemaining)} remaining
+                    {formattedTimeRemaining} remaining
                   </div>
                 )}
               </div>
@@ -795,28 +876,56 @@ export default function CookingAnimation({
               currentStep === processedSteps.length - 1 ||
               (timeRemaining !== null && !isStepComplete)
             }
-            className="px-4 sm:px-6 py-2 sm:py-3 bg-blue-500 text-white rounded-lg disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-2 text-sm sm:text-base"
+            className={`px-4 sm:px-6 py-2 sm:py-3 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-2 text-sm sm:text-base ${
+              currentStep === processedSteps.length - 1
+                ? "bg-green-500 hover:bg-green-600"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
             aria-label={
               timeRemaining !== null && !isStepComplete
                 ? "Waiting for step to complete"
+                : currentStep === processedSteps.length - 1
+                ? "Complete recipe"
                 : "Go to next step"
             }
           >
-            <span className="hidden sm:inline">Next Step</span>
-            <span className="sm:hidden">Next</span>
-            <svg
-              className="w-4 h-4 sm:w-5 sm:h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            {currentStep === processedSteps.length - 1 ? (
+              <>
+                <span className="hidden sm:inline">Complete Recipe</span>
+                <span className="sm:hidden">Complete</span>
+                <svg
+                  className="w-4 h-4 sm:w-5 sm:h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </>
+            ) : (
+              <>
+                <span className="hidden sm:inline">Next Step</span>
+                <span className="sm:hidden">Next</span>
+                <svg
+                  className="w-4 h-4 sm:w-5 sm:h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </>
+            )}
           </button>
         </div>
       </div>
