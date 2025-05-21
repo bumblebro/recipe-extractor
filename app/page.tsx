@@ -2,10 +2,32 @@
 
 import { useState } from "react";
 import CookingAnimation from "./components/CookingAnimation";
+import RecipeDetails from "./components/RecipeDetails";
+
+interface RecipeData {
+  name: string;
+  description: string;
+  ingredients: string[];
+  instructions: string[];
+  totalTime: string;
+  cookTime: string;
+  prepTime: string;
+  yield: string;
+  category: string;
+  cuisine: string;
+  keywords: string[];
+  nutrition: {
+    calories?: string;
+    proteinContent?: string;
+    fatContent?: string;
+    carbohydrateContent?: string;
+  };
+}
 
 export default function Home() {
   const [recipeUrl, setRecipeUrl] = useState("");
   const [instructions, setInstructions] = useState<string[]>([]);
+  const [recipeData, setRecipeData] = useState<RecipeData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,6 +50,7 @@ export default function Home() {
       }
 
       const data = await response.json();
+      setRecipeData(data);
       setInstructions(data.instructions);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -110,7 +133,6 @@ export default function Home() {
           </div>
         )}
       </div>
-
       {instructions.length > 0 && (
         <div className="mt-8">
           <CookingAnimation
@@ -121,6 +143,10 @@ export default function Home() {
           />
         </div>
       )}
+      
+      {recipeData && <RecipeDetails recipeData={recipeData} />}
+
+    
 
       <div className="mt-12 bg-white rounded-xl shadow-lg p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">How It Works</h2>
