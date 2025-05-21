@@ -164,12 +164,16 @@ export default function CookingAnimation({
   }, [timeRemaining, currentStep, processedSteps]);
 
   const calculateOverallProgress = useCallback(() => {
+    // If we're on the last step, return 100%
+    if (currentStep === processedSteps.length - 1) {
+      return 100;
+    }
     const completedCount = Math.min(
       completedSteps.length,
       processedSteps.length
     );
     return (completedCount / processedSteps.length) * 100;
-  }, [completedSteps.length, processedSteps.length]);
+  }, [completedSteps.length, processedSteps.length, currentStep]);
 
   // Memoize the progress calculation
   const progress = useMemo(() => {
@@ -407,8 +411,12 @@ export default function CookingAnimation({
               Recipe Progress
             </h3>
             <span className="text-sm font-medium text-gray-600">
-              {Math.min(completedSteps.length, processedSteps.length)} of{" "}
-              {processedSteps.length} steps completed
+              {Math.min(
+                completedSteps.length +
+                  (currentStep === processedSteps.length - 1 ? 1 : 0),
+                processedSteps.length
+              )}{" "}
+              of {processedSteps.length} steps completed
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
