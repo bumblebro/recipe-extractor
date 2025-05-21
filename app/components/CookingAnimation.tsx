@@ -114,6 +114,14 @@ export default function CookingAnimation({
     }
   };
 
+  const calculateProgress = () => {
+    if (timeRemaining === null) return 0;
+    const step = processedSteps[currentStep];
+    const totalDuration = getDurationInSeconds(step);
+    if (!totalDuration) return 0;
+    return ((totalDuration - timeRemaining) / totalDuration) * 100;
+  };
+
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
@@ -490,7 +498,7 @@ export default function CookingAnimation({
                   </div>
                 )}
                 {timeRemaining !== null && (
-                  <div className="mt-4 sm:mt-6">
+                  <div className="mt-4 sm:mt-6 w-full">
                     <div className="flex items-center gap-3 sm:gap-4">
                       <div
                         className="text-2xl sm:text-4xl font-mono bg-gray-100 px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-inner flex items-center gap-2"
@@ -561,6 +569,21 @@ export default function CookingAnimation({
                         )}
                       </button>
                     </div>
+                    <div className="mt-2 w-full bg-gray-200 rounded-full h-2.5">
+                      <div
+                        className="bg-blue-500 h-2.5 rounded-full transition-all duration-1000 ease-linear"
+                        style={{ width: `${calculateProgress()}%` }}
+                        role="progressbar"
+                        aria-valuenow={Math.round(calculateProgress())}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                      />
+                    </div>
+                    {/* <div className="mt-1 text-xs text-gray-500 flex justify-between">
+                      <span>Start</span>
+                      <span>{Math.round(calculateProgress())}% Complete</span>
+                      <span>End</span>
+                    </div> */}
                   </div>
                 )}
               </div>
