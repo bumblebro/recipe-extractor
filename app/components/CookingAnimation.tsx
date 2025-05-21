@@ -67,8 +67,37 @@ export default function CookingAnimation({
   const [isStepComplete, setIsStepComplete] = useState(false);
   const [isTimerComplete, setIsTimerComplete] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [currentLoadingMessage, setCurrentLoadingMessage] = useState(
+    "Setting up the kitchen..."
+  );
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const lastUpdateTimeRef = useRef<number>(Date.now());
+
+  const loadingMessages = [
+    "Setting up the kitchen...",
+    "Gathering ingredients...",
+    "Preheating the oven...",
+    "Sharpening knives...",
+    "Washing vegetables...",
+    "Measuring ingredients...",
+    "Organizing cooking tools...",
+    "Reading recipe carefully...",
+    "Preparing work station...",
+    "Getting everything ready...",
+  ];
+
+  useEffect(() => {
+    if (isProcessing) {
+      let index = 0;
+      const interval = setInterval(() => {
+        index = (index + 1) % loadingMessages.length;
+        setCurrentLoadingMessage(loadingMessages[index]);
+      }, 2000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isProcessing]);
 
   useEffect(() => {
     const processInstructions = async () => {
@@ -217,6 +246,7 @@ export default function CookingAnimation({
   const handleNextStep = () => {
     if (currentStep < processedSteps.length - 1) {
       setIsStepComplete(true);
+      setCompletedSteps((prev) => [...prev, currentStep]);
       setTimeout(() => {
         setCurrentStep((prev) => prev + 1);
         setIsStepComplete(false);
@@ -226,6 +256,16 @@ export default function CookingAnimation({
         setTimeRemaining(duration || null);
       }, 100);
     }
+  };
+
+  const handleCompleteStep = () => {
+    setIsStepComplete(true);
+    // Don't set isTimerComplete to avoid playing the timer completion sound
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setTimeRemaining(0);
   };
 
   const handlePreviousStep = () => {
@@ -243,6 +283,11 @@ export default function CookingAnimation({
 
   const togglePause = () => {
     setIsPaused((prev) => !prev);
+  };
+
+  // Calculate overall progress
+  const calculateOverallProgress = () => {
+    return (completedSteps.length / processedSteps.length) * 100;
   };
 
   if (error) {
@@ -282,8 +327,9 @@ export default function CookingAnimation({
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
         <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
-        <p className="text-gray-600">Processing recipe instructions...</p>
-        <p className="text-sm text-gray-500">This may take a few moments</p>
+        <p className="text-gray-600 text-lg font-medium">
+          {currentLoadingMessage}
+        </p>
       </div>
     );
   }
@@ -295,6 +341,33 @@ export default function CookingAnimation({
         isTimerComplete={isTimerComplete}
       />
       <div className="w-full max-w-5xl mx-auto p-4 sm:p-8 bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-xl">
+        <div className="mb-6 bg-white p-4 rounded-xl border border-blue-100 shadow-lg">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Recipe Progress
+            </h3>
+            <span className="text-sm font-medium text-gray-600">
+              {completedSteps.length} of {processedSteps.length} steps completed
+            </span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+            <div
+              className="bg-blue-500 h-2.5 rounded-full transition-all duration-500"
+              style={{ width: `${calculateOverallProgress()}%` }}
+              role="progressbar"
+              aria-valuenow={Math.round(calculateOverallProgress())}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`Recipe progress: ${Math.round(
+                calculateOverallProgress()
+              )}%`}
+            />
+          </div>
+          <div className="flex justify-end text-sm text-gray-600">
+            <span>{Math.round(calculateOverallProgress())}% Complete</span>
+          </div>
+        </div>
+
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-4 sm:mb-6">
             <div>
@@ -568,6 +641,27 @@ export default function CookingAnimation({
                           </>
                         )}
                       </button>
+                      <button
+                        onClick={handleCompleteStep}
+                        className="px-3 sm:px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-md flex items-center gap-2"
+                        aria-label="Complete step"
+                      >
+                        <svg
+                          className="w-4 h-4 sm:w-5 sm:h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        <span className="hidden sm:inline">Complete Step</span>
+                        <span className="sm:hidden">Complete</span>
+                      </button>
                     </div>
                     <div className="mt-2 w-full bg-gray-200 rounded-full h-2.5">
                       <div
@@ -577,13 +671,11 @@ export default function CookingAnimation({
                         aria-valuenow={Math.round(calculateProgress())}
                         aria-valuemin={0}
                         aria-valuemax={100}
+                        aria-label={`Step progress: ${Math.round(
+                          calculateProgress()
+                        )}%`}
                       />
                     </div>
-                    {/* <div className="mt-1 text-xs text-gray-500 flex justify-between">
-                      <span>Start</span>
-                      <span>{Math.round(calculateProgress())}% Complete</span>
-                      <span>End</span>
-                    </div> */}
                   </div>
                 )}
               </div>
@@ -603,6 +695,8 @@ export default function CookingAnimation({
               className={`p-3 sm:p-4 rounded-lg border transition-all cursor-pointer ${
                 currentStep === index
                   ? "border-blue-500 bg-blue-50 shadow-md"
+                  : completedSteps.includes(index)
+                  ? "border-green-500 bg-green-50"
                   : "border-gray-200 hover:border-blue-200"
               }`}
               role="button"
@@ -617,10 +711,28 @@ export default function CookingAnimation({
                     className={`flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-sm sm:text-base ${
                       currentStep === index
                         ? "bg-blue-500 text-white"
+                        : completedSteps.includes(index)
+                        ? "bg-green-500 text-white"
                         : "bg-gray-100 text-gray-600"
                     }`}
                   >
-                    {index + 1}
+                    {completedSteps.includes(index) ? (
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    ) : (
+                      index + 1
+                    )}
                   </div>
                   <div>
                     <p className="text-base sm:text-lg">{step.action}</p>

@@ -15,7 +15,7 @@ export const AudioNotifications = ({
   useEffect(() => {
     // Initialize audio elements
     stepCompleteSound.current = new Audio("/sounds/step-complete.mp3");
-    timerCompleteSound.current = new Audio("/sounds/timer-complete.mp3");
+    timerCompleteSound.current = new Audio("/sounds/timer-alert.mp3");
 
     // Preload sounds
     stepCompleteSound.current.load();
