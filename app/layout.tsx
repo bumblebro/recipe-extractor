@@ -5,6 +5,7 @@ import Script from "next/script";
 import Link from "next/link";
 import Footer from "./components/Footer";
 import Logo from "./components/Logo";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -114,7 +115,10 @@ export default function RootLayout({
           </main>
           <Footer />
         </div>
-      </body>
+      </body>{" "}
+      {process.env.NODE_ENV === "production" && (
+        <GoogleAnalytics gaId="G-X18BDWVHGK" />
+      )}
     </html>
   );
 }
