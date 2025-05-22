@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import CookingAnimationLottie from "./CookingAnimationLottie";
 import { AudioNotifications } from "./AudioNotifications";
 
@@ -47,12 +48,34 @@ interface ProcessedInstruction {
   notes?: string;
 }
 
+interface RecipeData {
+  name: string;
+  description: string;
+  image?: string;
+  ingredients: string[];
+  instructions: string[];
+  totalTime: string;
+  cookTime: string;
+  prepTime: string;
+  yield: string;
+  category: string;
+  cuisine: string;
+  keywords: string[];
+  nutrition: {
+    calories?: string;
+    proteinContent?: string;
+    fatContent?: string;
+    carbohydrateContent?: string;
+  };
+}
+
 interface CookingAnimationProps {
   instructions: string[];
   ingredients: Ingredient[];
   onStepComplete: (stepIndex: number) => void;
   servings?: number;
   onServingsChange?: (servings: number) => void;
+  recipeData?: RecipeData;
 }
 
 // Add helper function to format quantities as fractions
@@ -97,6 +120,7 @@ export default function CookingAnimation({
   onStepComplete,
   servings = 4,
   onServingsChange,
+  recipeData,
 }: CookingAnimationProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
@@ -275,19 +299,19 @@ export default function CookingAnimation({
     }
 
     timerRef.current = setInterval(() => {
-        setTimeRemaining((prev) => {
-          if (prev === null || prev <= 1) {
+      setTimeRemaining((prev) => {
+        if (prev === null || prev <= 1) {
           if (timerRef.current) {
             clearInterval(timerRef.current);
             timerRef.current = null;
           }
-            setIsStepComplete(true);
+          setIsStepComplete(true);
           setIsTimerComplete(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
   };
 
   useEffect(() => {
@@ -498,6 +522,89 @@ export default function CookingAnimation({
         isTimerComplete={isTimerComplete}
       />
       <div className="w-full max-w-5xl mx-auto px-2 sm:px-8 py-4 sm:py-8 bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-xl">
+        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-blue-100 shadow-lg p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row gap-6">
+            <div className="flex-shrink-0 w-full sm:w-48 h-48 relative rounded-lg overflow-hidden">
+              <Image
+                src={recipeData?.image || "/placeholder-recipe.jpg"}
+                alt={recipeData?.name || "Recipe image"}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+            <div className="flex-grow">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                {recipeData?.name || "Recipe"}
+              </h1>
+              <p className="text-gray-600 mb-4">
+                {recipeData?.description || "No description available"}
+              </p>
+              <div className="flex flex-wrap gap-4">
+                {recipeData?.totalTime && (
+                  <div className="flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span className="text-sm text-gray-600">
+                      Total: {recipeData.totalTime}
+                    </span>
+                  </div>
+                )}
+                {recipeData?.cookTime && (
+                  <div className="flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span className="text-sm text-gray-600">
+                      Cook: {recipeData.cookTime}
+                    </span>
+                  </div>
+                )}
+                {recipeData?.prepTime && (
+                  <div className="flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span className="text-sm text-gray-600">
+                      Prep: {recipeData.prepTime}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-blue-100 shadow-lg p-3 sm:p-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
             <div className="flex items-center gap-2">
@@ -558,12 +665,11 @@ export default function CookingAnimation({
             </div>
           </div>
         </div>
-
         <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-blue-100 shadow-lg overflow-hidden">
           <button
-            onClick={() => setIsInstructionsExpanded(!isInstructionsExpanded)}
+            onClick={() => setIsChecklistExpanded(!isChecklistExpanded)}
             className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-            aria-expanded={isInstructionsExpanded}
+            aria-expanded={isChecklistExpanded}
           >
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-50 rounded-lg">
@@ -577,82 +683,9 @@ export default function CookingAnimation({
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                   />
                 </svg>
-              </div>
-          <div>
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Original Instructions
-                </h3>
-                <p className="text-sm text-gray-500 text-start">
-                  {instructions.length} steps
-            </p>
-          </div>
-            </div>
-            <svg
-              className={`w-5 h-5 text-gray-500 transform transition-transform ${
-                isInstructionsExpanded ? "rotate-180" : ""
-              }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
-
-          <div
-            className={`transition-all duration-300 ease-in-out ${
-              isInstructionsExpanded
-                ? "max-h-[800px] opacity-100"
-                : "max-h-0 opacity-0"
-            } overflow-y-auto`}
-          >
-            <div className="p-4 pt-0">
-              <div className="space-y-3 pb-2">
-                {instructions.map((instruction, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
-                  >
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-medium">
-                      {index + 1}
-                    </span>
-                    <p className="text-sm text-gray-700">{instruction}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-blue-100 shadow-lg overflow-hidden">
-            <button
-            onClick={() => setIsChecklistExpanded(!isChecklistExpanded)}
-            className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-            aria-expanded={isChecklistExpanded}
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <svg
-                  className="w-5 h-5 text-blue-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">
@@ -698,7 +731,7 @@ export default function CookingAnimation({
                 />
               </svg>
             </div>
-            </button>
+          </button>
 
           <div
             id="ingredient-checklist"
@@ -728,7 +761,7 @@ export default function CookingAnimation({
                           : "bg-gray-50 border border-gray-200 hover:bg-gray-100"
                       }`}
                     >
-            <button
+                      <button
                         onClick={() => toggleIngredient(ingredient)}
                         className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
                           checkedIngredients.has(key)
@@ -742,17 +775,17 @@ export default function CookingAnimation({
                         {checkedIngredients.has(key) && (
                           <svg
                             className="w-3 h-3 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
                               d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                            />
+                          </svg>
                         )}
                       </button>
                       <div className="flex-grow min-w-0">
@@ -804,17 +837,17 @@ export default function CookingAnimation({
                               <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium flex items-center gap-1">
                                 <svg
                                   className="w-3 h-3"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+                                  />
+                                </svg>
                                 Needed now
                               </span>
                             </div>
@@ -827,7 +860,78 @@ export default function CookingAnimation({
             </div>
           </div>
         </div>
+        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-blue-100 shadow-lg overflow-hidden">
+          <button
+            onClick={() => setIsInstructionsExpanded(!isInstructionsExpanded)}
+            className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+            aria-expanded={isInstructionsExpanded}
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <svg
+                  className="w-5 h-5 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Original Instructions
+                </h3>
+                <p className="text-sm text-gray-500 text-start">
+                  {instructions.length} steps
+                </p>
+              </div>
+            </div>
+            <svg
+              className={`w-5 h-5 text-gray-500 transform transition-transform ${
+                isInstructionsExpanded ? "rotate-180" : ""
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
 
+          <div
+            className={`transition-all duration-300 ease-in-out ${
+              isInstructionsExpanded
+                ? "max-h-[800px] opacity-100"
+                : "max-h-0 opacity-0"
+            } overflow-y-auto`}
+          >
+            <div className="p-4 pt-0">
+              <div className="space-y-3 pb-2">
+                {instructions.map((instruction, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                  >
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-medium">
+                      {index + 1}
+                    </span>
+                    <p className="text-sm text-gray-700">{instruction}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="mb-6 bg-white p-4 rounded-xl border border-blue-100 shadow-lg">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-lg font-semibold text-gray-800">
@@ -857,26 +961,55 @@ export default function CookingAnimation({
             <span>{Math.round(overallProgress)}% Complete</span>
           </div>
         </div>
-
         <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-4 sm:mb-6">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
-                Kitchen Dashboard
-              </h2>
-              <p className="text-sm sm:text-base text-gray-600 mt-1">
-                Follow along with your recipe step by step
-              </p>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
+          <div className="flex justify-end gap-4">
             <button
-                onClick={handlePreviousStep}
-                disabled={currentStep === 0 || timeRemaining !== null}
-                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-gray-500 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md hover:bg-gray-600 flex items-center justify-center gap-2 text-sm sm:text-base"
-                aria-label="Go to previous step"
+              onClick={handlePreviousStep}
+              disabled={currentStep === 0 || timeRemaining !== null}
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md hover:bg-gray-600 flex items-center gap-2"
+              aria-label="Go to previous step"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <svg
-                  className="w-4 h-4 sm:w-5 sm:h-5"
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              <span className="hidden sm:inline">Previous Step</span>
+              <span className="sm:hidden">Prev</span>
+            </button>
+            <button
+              onClick={handleNextStep}
+              disabled={
+                currentStep === processedSteps.length - 1 ||
+                (timeRemaining !== null && !isStepComplete)
+              }
+              className={`px-6 py-2 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-2 ${
+                currentStep === processedSteps.length - 1
+                  ? "bg-green-500 hover:bg-green-600"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
+              aria-label={
+                timeRemaining !== null && !isStepComplete
+                  ? "Waiting for step to complete"
+                  : currentStep === processedSteps.length - 1
+                  ? "Complete recipe"
+                  : "Go to next step"
+              }
+            >
+              {currentStep === processedSteps.length - 1 ? (
+                <>
+                  <span className="hidden sm:inline">Complete Recipe</span>
+                  <span className="sm:hidden">Complete</span>
+                  <svg
+                    className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -885,55 +1018,16 @@ export default function CookingAnimation({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-                <span className="hidden sm:inline">Previous Step</span>
-                <span className="sm:hidden">Prev</span>
-              </button>
-              <button
-                onClick={handleNextStep}
-                disabled={
-                  currentStep === processedSteps.length - 1 ||
-                  (timeRemaining !== null && !isStepComplete)
-                }
-                className={`px-4 sm:px-6 py-2 sm:py-3 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-2 text-sm sm:text-base ${
-                  currentStep === processedSteps.length - 1
-                    ? "bg-green-500 hover:bg-green-600"
-                    : "bg-blue-500 hover:bg-blue-600"
-                }`}
-                aria-label={
-                  timeRemaining !== null && !isStepComplete
-                    ? "Waiting for step to complete"
-                    : currentStep === processedSteps.length - 1
-                    ? "Complete recipe"
-                    : "Go to next step"
-                }
-              >
-                {currentStep === processedSteps.length - 1 ? (
-                  <>
-                    <span className="hidden sm:inline">Complete Recipe</span>
-                    <span className="sm:hidden">Complete</span>
-                    <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                        d="M5 13l4 4L19 7"
+                      d="M5 13l4 4L19 7"
                     />
                   </svg>
                 </>
               ) : (
                 <>
-                    <span className="hidden sm:inline">Next Step</span>
-                    <span className="sm:hidden">Next</span>
+                  <span className="hidden sm:inline">Next Step</span>
+                  <span className="sm:hidden">Next</span>
                   <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5"
+                    className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -942,7 +1036,7 @@ export default function CookingAnimation({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                        d="M9 5l7 7-7 7"
+                      d="M9 5l7 7-7 7"
                     />
                   </svg>
                 </>
@@ -950,18 +1044,17 @@ export default function CookingAnimation({
             </button>
           </div>
         </div>
-
-          <div className="bg-white p-4 sm:p-8 rounded-xl border border-blue-100 shadow-lg">
-            <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8">
-              <div className="flex-shrink-0 bg-blue-50 p-3 sm:p-4 rounded-xl h-36 w-36 sm:h-48 sm:w-48 relative">
+        <div className="bg-white p-4 sm:p-8 rounded-xl border border-blue-100 shadow-lg">
+          <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8">
+            <div className="flex-shrink-0 bg-blue-50 p-3 sm:p-4 rounded-xl h-36 w-36 sm:h-48 sm:w-48 relative">
               <CookingAnimationLottie
                 animationType={
                   processedSteps[currentStep]?.animationType || "waiting"
                 }
                 isPaused={isPaused}
               />
-                <div className="absolute bottom-2 left-2 right-2 bg-white/80 backdrop-blur-sm rounded-lg p-1.5 sm:p-2 text-center">
-                  <span className="text-xs sm:text-sm font-medium text-gray-700">
+              <div className="absolute bottom-2 left-2 right-2 bg-white/80 backdrop-blur-sm rounded-lg p-1.5 sm:p-2 text-center">
+                <span className="text-xs sm:text-sm font-medium text-gray-700">
                   {processedSteps[currentStep]?.animationType
                     ? processedSteps[currentStep].animationType
                         .charAt(0)
@@ -971,10 +1064,10 @@ export default function CookingAnimation({
                 </span>
               </div>
             </div>
-              <div className="flex-grow space-y-3 sm:space-y-4">
-                <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex-grow space-y-3 sm:space-y-4">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <span
-                    className="px-2 sm:px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-medium"
+                  className="px-2 sm:px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-medium"
                   aria-label={`Step ${currentStep + 1} of ${
                     processedSteps.length
                   }`}
@@ -983,7 +1076,7 @@ export default function CookingAnimation({
                 </span>
                 {timeRemaining !== null && (
                   <span
-                      className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${
+                    className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${
                       isPaused
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-green-100 text-green-800"
@@ -996,14 +1089,14 @@ export default function CookingAnimation({
                   </span>
                 )}
               </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-gray-800">
-                  {currentStepData?.action}
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-800">
+                {currentStepData?.action}
               </h3>
-                {currentStepData?.ingredients && (
-                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <h4 className="text-xs sm:text-sm font-medium text-gray-500 mb-3 flex items-center gap-2">
-                      <svg
-                        className="w-3 h-3 sm:w-4 sm:h-4"
+              {currentStepData?.ingredients && (
+                <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                  <h4 className="text-xs sm:text-sm font-medium text-gray-500 mb-3 flex items-center gap-2">
+                    <svg
+                      className="w-3 h-3 sm:w-4 sm:h-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1018,75 +1111,75 @@ export default function CookingAnimation({
                     Ingredients Needed
                   </h4>
                   <ul className="space-y-2">
-                      {currentStepData.ingredients.map((ingredient, index) => {
-                        const originalQuantity = ingredient.quantity || 0;
-                        const scaledQuantity =
-                          originalQuantity * (currentServings / servings);
-                        const key = `${ingredient.name}-${ingredient.quantity}-${ingredient.unit}`;
-                        const isChecked = checkedIngredients.has(key);
+                    {currentStepData.ingredients.map((ingredient, index) => {
+                      const originalQuantity = ingredient.quantity || 0;
+                      const scaledQuantity =
+                        originalQuantity * (currentServings / servings);
+                      const key = `${ingredient.name}-${ingredient.quantity}-${ingredient.unit}`;
+                      const isChecked = checkedIngredients.has(key);
 
-                        return (
+                      return (
                         <li
                           key={index}
-                            className={`flex items-start gap-2 p-2 rounded-lg transition-colors ${
-                              isChecked ? "bg-green-50" : "bg-white"
-                            }`}
-                          >
-                            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></span>
-                            <div className="flex-grow min-w-0">
-                              <div className="flex items-start justify-between gap-2">
-                                <div>
+                          className={`flex items-start gap-2 p-2 rounded-lg transition-colors ${
+                            isChecked ? "bg-green-50" : "bg-white"
+                          }`}
+                        >
+                          <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></span>
+                          <div className="flex-grow min-w-0">
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <span
+                                  className={`block text-sm font-medium ${
+                                    isChecked
+                                      ? "text-gray-500 line-through"
+                                      : "text-gray-700"
+                                  }`}
+                                >
+                                  {ingredient.name}
+                                </span>
+                                {ingredient.preparation && (
+                                  <span className="text-xs text-gray-500">
+                                    {ingredient.preparation}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1 flex-shrink-0">
+                                {ingredient.quantity && (
                                   <span
-                                    className={`block text-sm font-medium ${
+                                    className={`text-sm font-medium ${
                                       isChecked
-                                        ? "text-gray-500 line-through"
+                                        ? "text-gray-500"
                                         : "text-gray-700"
                                     }`}
                                   >
-                                    {ingredient.name}
+                                    {formatQuantity(scaledQuantity)}
                                   </span>
-                                  {ingredient.preparation && (
-                                    <span className="text-xs text-gray-500">
-                                      {ingredient.preparation}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-1 flex-shrink-0">
-                          {ingredient.quantity && (
-                                    <span
-                                      className={`text-sm font-medium ${
-                                        isChecked
-                                          ? "text-gray-500"
-                                          : "text-gray-700"
-                                      }`}
-                                    >
-                                      {formatQuantity(scaledQuantity)}
-                            </span>
-                          )}
-                          {ingredient.unit && (
-                                    <span
-                                      className={`text-sm ${
-                                        isChecked
-                                          ? "text-gray-500"
-                                          : "text-gray-600"
-                                      }`}
-                                    >
-                              {ingredient.unit}
-                            </span>
-                          )}
-                                </div>
+                                )}
+                                {ingredient.unit && (
+                                  <span
+                                    className={`text-sm ${
+                                      isChecked
+                                        ? "text-gray-500"
+                                        : "text-gray-600"
+                                    }`}
+                                  >
+                                    {ingredient.unit}
+                                  </span>
+                                )}
                               </div>
                             </div>
+                          </div>
                         </li>
-                        );
-                      })}
+                      );
+                    })}
                   </ul>
                 </div>
               )}
-                {currentStepData?.temperature && (
-                  <div className="flex items-center gap-2 text-gray-700 bg-gray-50 p-2 sm:p-3 rounded-lg">
+              {currentStepData?.temperature && (
+                <div className="flex items-center gap-2 text-gray-700 bg-gray-50 p-2 sm:p-3 rounded-lg">
                   <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 flex-shrink-0"
+                    className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1098,17 +1191,17 @@ export default function CookingAnimation({
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                     />
                   </svg>
-                    <span className="text-sm sm:text-base font-medium">
-                      {currentStepData.temperature}°
-                      {currentStepData.temperatureUnit}
+                  <span className="text-sm sm:text-base font-medium">
+                    {currentStepData.temperature}°
+                    {currentStepData.temperatureUnit}
                   </span>
                 </div>
               )}
-                {currentStepData?.notes && (
-                  <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
-                    <p className="text-sm sm:text-base text-blue-700 flex items-start gap-2">
-                      <svg
-                        className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0"
+              {currentStepData?.notes && (
+                <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
+                  <p className="text-sm sm:text-base text-blue-700 flex items-start gap-2">
+                    <svg
+                      className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1120,19 +1213,19 @@ export default function CookingAnimation({
                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                      <span>{currentStepData.notes}</span>
+                    <span>{currentStepData.notes}</span>
                   </p>
                 </div>
               )}
               {timeRemaining !== null && (
-                  <div className="mt-4 sm:mt-6 w-full">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div
-                        className="text-2xl sm:text-4xl font-mono bg-gray-100 px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-inner flex items-center gap-2"
-                        aria-label={`Time remaining: ${formattedTimeRemaining}`}
+                <div className="mt-4 sm:mt-6 w-full">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div
+                      className="text-2xl sm:text-4xl font-mono bg-gray-100 px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-inner flex items-center gap-2"
+                      aria-label={`Time remaining: ${formattedTimeRemaining}`}
                     >
                       <svg
-                          className="w-4 h-4 sm:w-6 sm:h-6 text-gray-500 flex-shrink-0"
+                        className="w-4 h-4 sm:w-6 sm:h-6 text-gray-500 flex-shrink-0"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -1144,128 +1237,126 @@ export default function CookingAnimation({
                           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                        {formattedTimeRemaining}
+                      {formattedTimeRemaining}
                     </div>
-                      <button
-                        onClick={togglePause}
-                        className="px-3 sm:px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md flex items-center gap-2"
-                        aria-label={isPaused ? "Resume timer" : "Pause timer"}
+                    <button
+                      onClick={togglePause}
+                      className="px-3 sm:px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md flex items-center gap-2"
+                      aria-label={isPaused ? "Resume timer" : "Pause timer"}
+                    >
+                      {isPaused ? (
+                        <>
+                          <svg
+                            className="w-4 h-4 sm:w-5 sm:h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span className="hidden sm:inline">Resume</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg
+                            className="w-4 h-4 sm:w-5 sm:h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <span className="hidden sm:inline">Pause</span>
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={handleCompleteStep}
+                      className="px-3 sm:px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-md flex items-center gap-2"
+                      aria-label="Complete step"
+                    >
+                      <svg
+                        className="w-4 h-4 sm:w-5 sm:h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        {isPaused ? (
-                          <>
-                            <svg
-                              className="w-4 h-4 sm:w-5 sm:h-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
-                            <span className="hidden sm:inline">Resume</span>
-                          </>
-                        ) : (
-                          <>
-                            <svg
-                              className="w-4 h-4 sm:w-5 sm:h-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
-                            <span className="hidden sm:inline">Pause</span>
-                          </>
-                        )}
-                      </button>
-                      <button
-                        onClick={handleCompleteStep}
-                        className="px-3 sm:px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-md flex items-center gap-2"
-                        aria-label="Complete step"
-                      >
-                        <svg
-                          className="w-4 h-4 sm:w-5 sm:h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span className="hidden sm:inline">Complete Step</span>
-                        <span className="sm:hidden">Complete</span>
-                      </button>
-                    </div>
-                    <div className="mt-2 w-full bg-gray-200 rounded-full h-2.5">
-                      <div
-                        className="bg-blue-500 h-2.5 rounded-full transition-all duration-1000 ease-linear"
-                        style={{ width: `${progress}%` }}
-                        role="progressbar"
-                        aria-valuenow={Math.round(progress)}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                        aria-label={`Step progress: ${Math.round(progress)}%`}
-                      />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <span className="hidden sm:inline">Complete Step</span>
+                      <span className="sm:hidden">Complete</span>
+                    </button>
+                  </div>
+                  <div className="mt-2 w-full bg-gray-200 rounded-full h-2.5">
+                    <div
+                      className="bg-blue-500 h-2.5 rounded-full transition-all duration-1000 ease-linear"
+                      style={{ width: `${progress}%` }}
+                      role="progressbar"
+                      aria-valuenow={Math.round(progress)}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-label={`Step progress: ${Math.round(progress)}%`}
+                    />
                   </div>
                 </div>
               )}
             </div>
           </div>
-        </div>
-      </div>
-
-        <div className="space-y-2 sm:space-y-3">
-        {processedSteps.map((step, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{
-              opacity: currentStep === index ? 1 : 0.6,
-              y: 0,
-            }}
+        </div>{" "}
+        <div className="space-y-2 sm:space-y-3 my-10">
+          {processedSteps.map((step, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{
+                opacity: currentStep === index ? 1 : 0.6,
+                y: 0,
+              }}
               className={`p-3 sm:p-4 rounded-lg border transition-all cursor-pointer ${
-              currentStep === index
-                ? "border-blue-500 bg-blue-50 shadow-md"
+                currentStep === index
+                  ? "border-blue-500 bg-blue-50 shadow-md"
                   : completedSteps.includes(index)
                   ? "border-green-500 bg-green-50"
-                : "border-gray-200 hover:border-blue-200"
-            }`}
-            role="button"
-            tabIndex={0}
-            onClick={() => startStep(index)}
-            onKeyPress={(e) => e.key === "Enter" && startStep(index)}
-            aria-label={`Step ${index + 1}: ${step.action}`}
-          >
-            <div className="flex items-center justify-between">
+                  : "border-gray-200 hover:border-blue-200"
+              }`}
+              role="button"
+              tabIndex={0}
+              onClick={() => startStep(index)}
+              onKeyPress={(e) => e.key === "Enter" && startStep(index)}
+              aria-label={`Step ${index + 1}: ${step.action}`}
+            >
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 sm:gap-4">
-                <div
+                  <div
                     className={`flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-sm sm:text-base ${
-                    currentStep === index
-                      ? "bg-blue-500 text-white"
+                      currentStep === index
+                        ? "bg-blue-500 text-white"
                         : completedSteps.includes(index)
                         ? "bg-green-500 text-white"
-                      : "bg-gray-100 text-gray-600"
-                  }`}
-                >
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
                     {completedSteps.includes(index) ? (
                       <svg
                         className="w-4 h-4"
@@ -1283,119 +1374,37 @@ export default function CookingAnimation({
                     ) : (
                       index + 1
                     )}
-                </div>
-                <div>
+                  </div>
+                  <div>
                     <p className="text-base sm:text-lg">{step.action}</p>
-                  {step.ingredients && step.ingredients.length > 0 && (
+                    {step.ingredients && step.ingredients.length > 0 && (
                       <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                      {step.ingredients.map((i) => i.name).join(", ")}
-                    </p>
-                  )}
+                        {step.ingredients.map((i) => i.name).join(", ")}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-              {index === currentStep && timeRemaining !== null && (
+                {index === currentStep && timeRemaining !== null && (
                   <div className="text-xs sm:text-sm text-gray-500 flex items-center gap-1.5 sm:gap-2">
-                  <svg
+                    <svg
                       className="w-3 h-3 sm:w-4 sm:h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
                     {formattedTimeRemaining} remaining
-                </div>
-              )}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-        <div className="mt-6 sm:mt-8 flex justify-center gap-3 sm:gap-4">
-        <button
-            onClick={handlePreviousStep}
-          disabled={currentStep === 0 || timeRemaining !== null}
-            className="px-4 sm:px-6 py-2 sm:py-3 bg-gray-500 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md hover:bg-gray-600 flex items-center gap-2 text-sm sm:text-base"
-          aria-label="Go to previous step"
-        >
-          <svg
-              className="w-4 h-4 sm:w-5 sm:h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-            <span className="hidden sm:inline">Previous Step</span>
-            <span className="sm:hidden">Prev</span>
-        </button>
-        <button
-            onClick={handleNextStep}
-          disabled={
-            currentStep === processedSteps.length - 1 ||
-            (timeRemaining !== null && !isStepComplete)
-          }
-            className={`px-4 sm:px-6 py-2 sm:py-3 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-2 text-sm sm:text-base ${
-              currentStep === processedSteps.length - 1
-                ? "bg-green-500 hover:bg-green-600"
-                : "bg-blue-500 hover:bg-blue-600"
-            }`}
-          aria-label={
-            timeRemaining !== null && !isStepComplete
-              ? "Waiting for step to complete"
-                : currentStep === processedSteps.length - 1
-                ? "Complete recipe"
-              : "Go to next step"
-          }
-        >
-            {currentStep === processedSteps.length - 1 ? (
-            <>
-                <span className="hidden sm:inline">Complete Recipe</span>
-                <span className="sm:hidden">Complete</span>
-              <svg
-                  className="w-4 h-4 sm:w-5 sm:h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </>
-          ) : (
-            <>
-                <span className="hidden sm:inline">Next Step</span>
-                <span className="sm:hidden">Next</span>
-              <svg
-                  className="w-4 h-4 sm:w-5 sm:h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </>
-          )}
-        </button>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </div>

@@ -61,7 +61,7 @@ export default function Home() {
   };
 
   return (
-    <div className="space-y-8 my-24">
+    <div className="space-y-8">
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Interactive Recipe Guide
@@ -72,7 +72,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="max-w-2xl mx-auto mb-40">
+      <div className="max-w-2xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
@@ -148,11 +148,12 @@ export default function Home() {
             onStepComplete={(stepIndex) => {
               console.log(`Step ${stepIndex + 1} completed`);
             }}
+            recipeData={recipeData}
           />
         </div>
       )}
 
-      {/* {recipeData && <RecipeDetails recipeData={recipeData} />} */}
+      {recipeData && <RecipeDetails recipeData={recipeData} />}
 
       <HowItWorks />
     </div>

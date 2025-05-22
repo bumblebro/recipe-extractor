@@ -207,10 +207,6 @@ export async function POST(request: Request) {
       });
     } catch (error) {
       console.error("Error processing instructions:", error);
-      return NextResponse.json(
-        { error: "Failed to process recipe instructions" },
-        { status: 500 }
-      );
       // Fallback to basic processing with all fields
       const processedInstructions = instructions.map((instruction, index) => {
         const { duration, durationUnit } = extractDuration(instruction);
