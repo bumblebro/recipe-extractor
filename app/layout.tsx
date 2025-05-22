@@ -1,19 +1,22 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Script from "next/script";
 import Link from "next/link";
 import Footer from "./components/Footer";
-import Script from "next/script";
-import { defaultMetadata } from "./metadata.config";
+import Logo from "./components/Logo";
 
-// Optimize font loading
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  preload: true,
-});
+const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = defaultMetadata;
+export const metadata: Metadata = {
+  title: "GuideMyRecipe - AI-Powered Cooking Assistant",
+  description:
+    "Transform any recipe into an interactive cooking guide. Extract, organize, and follow recipes from any website with our AI-powered cooking assistant.",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+  },
+  themeColor: "#2563EB",
+};
 
 export default function RootLayout({
   children,
@@ -78,29 +81,23 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
-          <nav className="bg-white shadow-lg">
+          <nav className="bg-white shadow-lg sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-16">
                 <div className="flex items-center">
-                  <Link
-                    href="/"
-                    className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
-                    aria-label="GuideMyRecipe.com Home"
-                  >
-                    Guide My Recipe
-                  </Link>
+                  <Logo />
                 </div>
                 <div className="flex items-center space-x-4">
                   <Link
                     href="/"
-                    className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                    className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                     aria-label="Home Page"
                   >
                     Home
                   </Link>
                   <Link
                     href="/about"
-                    className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                    className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                     aria-label="About Us Page"
                   >
                     About

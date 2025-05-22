@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import CookingAnimation from "./components/CookingAnimation";
-import RecipeDetails from "./components/RecipeDetails";
 import HowItWorks from "./components/HowItWorks";
 
 interface RecipeData {
@@ -26,42 +26,55 @@ interface RecipeData {
 }
 
 export default function Home() {
+  const searchParams = useSearchParams();
   const [recipeUrl, setRecipeUrl] = useState("");
   const [instructions, setInstructions] = useState<string[]>([]);
   const [recipeData, setRecipeData] = useState<RecipeData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+  const handleSubmit = useCallback(
+    async (e?: React.FormEvent<HTMLFormElement>, url?: string) => {
+      if (e) e.preventDefault();
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const response = await fetch("/api/extract-recipe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url: recipeUrl }),
-      });
+      try {
+        const response = await fetch("/api/extract-recipe", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ url: url || recipeUrl }),
+        });
 
-      if (!response.ok) {
-        throw new Error("Failed to extract recipe");
+        if (!response.ok) {
+          throw new Error("Failed to extract recipe");
+        }
+
+        const data = await response.json();
+        console.log(data);
+        setRecipeData(data);
+        setInstructions(data.instructions);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [recipeUrl]
+  );
 
-      const data = await response.json();
-      setRecipeData(data);
-      setInstructions(data.instructions);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    const urlParam = searchParams.get("url");
+    if (urlParam) {
+      setRecipeUrl(urlParam);
+      handleSubmit(undefined, urlParam);
     }
-  };
+  }, [searchParams, handleSubmit]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 mt-32">
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Interactive Recipe Guide
@@ -153,7 +166,7 @@ export default function Home() {
         </div>
       )}
 
-      {recipeData && <RecipeDetails recipeData={recipeData} />}
+      {/* {recipeData && <RecipeDetails recipeData={recipeData} />} */}
 
       <HowItWorks />
     </div>

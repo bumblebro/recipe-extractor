@@ -31,6 +31,7 @@ interface RecipeData {
   "@type": string | string[];
   name?: string;
   description?: string;
+  image?: string | string[];
   recipeIngredient?: string[];
   recipeInstructions?: Array<{ text?: string } | string>;
   totalTime?: string;
@@ -177,6 +178,12 @@ export async function POST(request: Request) {
         description:
           $(".recipe-description").first().text().trim() ||
           $("[class*='description']").first().text().trim(),
+        image:
+          $(".recipe-image img, .recipe-photo img, [class*='recipe'] img")
+            .first()
+            .attr("src") ||
+          $("meta[property='og:image']").attr("content") ||
+          $("meta[name='twitter:image']").attr("content"),
         ingredients: $(
           ".ingredients li, .ingredient-item, [class*='ingredient'] li"
         )
@@ -416,6 +423,7 @@ export async function POST(request: Request) {
     const formattedRecipe = {
       name: recipeData.name || "",
       description: recipeData.description || "",
+      image: recipeData.image || "",
       ingredients: scaledIngredients || [],
       instructions: Array.isArray(recipeData.recipeInstructions)
         ? processInstructions(recipeData.recipeInstructions)

@@ -1,12 +1,28 @@
-import type { NextConfig } from "next";
+// next.config.mjs
 
-const nextConfig: NextConfig = {
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.json$/,
-      type: "json",
-    });
-    return config;
+/**
+ * @type {import('next').NextConfig}
+ */
+const nextConfig = {
+  images: {
+    // unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**", // Double asterisk allows any subdomain
+        port: "",
+        pathname: "/**", // Allows all paths
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
+  experimental: {
+    nextScriptWorkers: true,
   },
 };
 

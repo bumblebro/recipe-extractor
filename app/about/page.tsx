@@ -144,7 +144,7 @@ export default function About() {
                 Contact Us
               </h2>
               <p className="text-gray-700 mb-4">
-                Have questions or suggestions? We'd love to hear from you!
+                Have questions or suggestions? We&apos;d love to hear from you!
               </p>
               <div className="bg-gray-50 p-4 rounded-lg">
                 <p className="text-gray-700">

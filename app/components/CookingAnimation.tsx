@@ -51,7 +51,7 @@ interface ProcessedInstruction {
 interface RecipeData {
   name: string;
   description: string;
-  image?: string;
+  image?: string | string[];
   ingredients: string[];
   instructions: string[];
   totalTime: string;
@@ -112,6 +112,26 @@ const formatQuantity = (quantity: number): string => {
 
   // For other decimals, round to 1 decimal place
   return quantity.toFixed(1);
+};
+
+const formatDuration = (duration: string): string => {
+  // Remove 'PT' prefix and convert to readable format
+  const time = duration.replace("PT", "");
+
+  // Handle hours
+  if (time.includes("H")) {
+    const hours = time.split("H")[0];
+    const minutes = time.split("H")[1]?.replace("M", "") || "0";
+    return `${hours}h ${minutes}m`;
+  }
+
+  // Handle only minutes
+  if (time.includes("M")) {
+    const minutes = time.replace("M", "");
+    return `${minutes} min`;
+  }
+
+  return duration;
 };
 
 export default function CookingAnimation({
@@ -526,11 +546,23 @@ export default function CookingAnimation({
           <div className="flex flex-col sm:flex-row gap-6">
             <div className="flex-shrink-0 w-full sm:w-48 h-48 relative rounded-lg overflow-hidden">
               <Image
-                src={recipeData?.image || "/placeholder-recipe.jpg"}
+                src={
+                  typeof recipeData?.image === "string"
+                    ? recipeData.image
+                    : Array.isArray(recipeData?.image) &&
+                      recipeData.image.length > 0
+                    ? recipeData.image[0]
+                    : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSE44KmlnivuSMU4iWXqP7-M3RQj_k03VLEgg&s"
+                }
                 alt={recipeData?.name || "Recipe image"}
                 fill
                 className="object-cover"
                 priority
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src =
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSE44KmlnivuSMU4iWXqP7-M3RQj_k03VLEgg&s";
+                }}
               />
             </div>
             <div className="flex-grow">
@@ -557,7 +589,7 @@ export default function CookingAnimation({
                       />
                     </svg>
                     <span className="text-sm text-gray-600">
-                      Total: {recipeData.totalTime}
+                      Total: {formatDuration(recipeData.totalTime)}
                     </span>
                   </div>
                 )}
@@ -577,7 +609,7 @@ export default function CookingAnimation({
                       />
                     </svg>
                     <span className="text-sm text-gray-600">
-                      Cook: {recipeData.cookTime}
+                      Cook: {formatDuration(recipeData.cookTime)}
                     </span>
                   </div>
                 )}
@@ -597,7 +629,7 @@ export default function CookingAnimation({
                       />
                     </svg>
                     <span className="text-sm text-gray-600">
-                      Prep: {recipeData.prepTime}
+                      Prep: {formatDuration(recipeData.prepTime)}
                     </span>
                   </div>
                 )}

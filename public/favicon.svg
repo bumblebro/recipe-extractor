@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Recipe Book -->
+  <path
+    d="M4 4h16v16H4V4z"
+    fill="#2563EB"
+    fill-opacity="0.1"
+  />
+  <path
+    d="M4 4h16v16H4V4z"
+    stroke="#2563EB"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <!-- Book Pages -->
+  <path
+    d="M8 8h8M8 12h8M8 16h4"
+    stroke="#2563EB"
+    stroke-width="1.5"
+    stroke-linecap="round"
+  />
+  <!-- Cooking Utensil -->
+  <path
+    d="M16 4l2-2M16 4l-2-2"
+    stroke="#2563EB"
+    stroke-width="1.5"
+    stroke-linecap="round"
+  />
+  <!-- Cooking Pot -->
+  <path
+    d="M6 18c0 0 2-1 6-1s6 1 6 1"
+    stroke="#2563EB"
+    stroke-width="1.5"
+    stroke-linecap="round"
+  />
+</svg> 
