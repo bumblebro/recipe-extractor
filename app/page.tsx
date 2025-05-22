@@ -3,6 +3,7 @@
 import { useState } from "react";
 import CookingAnimation from "./components/CookingAnimation";
 import RecipeDetails from "./components/RecipeDetails";
+import HowItWorks from "./components/HowItWorks";
 
 interface RecipeData {
   name: string;
@@ -60,7 +61,7 @@ export default function Home() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 my-24">
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Interactive Recipe Guide
@@ -71,7 +72,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto mb-40">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
@@ -133,6 +134,7 @@ export default function Home() {
           </div>
         )}
       </div>
+
       {instructions.length > 0 && recipeData && (
         <div className="mt-8">
           <CookingAnimation
@@ -150,82 +152,9 @@ export default function Home() {
         </div>
       )}
 
-      {recipeData && <RecipeDetails recipeData={recipeData} />}
+      {/* {recipeData && <RecipeDetails recipeData={recipeData} />} */}
 
-      <div className="mt-12 bg-white rounded-xl shadow-lg p-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">How It Works</h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-blue-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Enter Recipe URL
-            </h3>
-            <p className="text-gray-600">
-              Paste the URL of any recipe from supported websites
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-blue-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Get Instructions
-            </h3>
-            <p className="text-gray-600">
-              Our AI extracts and structures the cooking steps
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-blue-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Follow Along
-            </h3>
-            <p className="text-gray-600">
-              Get interactive animations and timers for each step
-            </p>
-          </div>
-        </div>
-      </div>
+      <HowItWorks />
     </div>
   );
 }

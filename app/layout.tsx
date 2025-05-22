@@ -1,14 +1,19 @@
-import type { Metadata } from "next";
+import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import Footer from "./components/Footer";
+import Script from "next/script";
+import { defaultMetadata } from "./metadata.config";
 
-const inter = Inter({ subsets: ["latin"] });
+// Optimize font loading
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+});
 
-export const metadata: Metadata = {
-  title: "Recipe Extractor - Interactive Cooking Guide",
-  description: "Step-by-step cooking instructions with interactive animations",
-};
+export const metadata: Metadata = defaultMetadata;
 
 export default function RootLayout({
   children,
@@ -17,6 +22,60 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Preconnect to external domains */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+
+        {/* Structured data */}
+        <Script
+          id="structured-data"
+          type="application/ld+json"
+          strategy="worker"
+        >
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              "name": "GuideMyRecipe.com",
+              "url": "https://guidemyrecipe.com",
+              "description": "Transform any recipe into an interactive cooking guide. Extract, organize, and follow recipes from any website with our AI-powered cooking assistant.",
+              "applicationCategory": "CookingApplication",
+              "operatingSystem": "Web",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+              },
+              "featureList": [
+                "Recipe Extraction",
+                "Interactive Cooking Guide",
+                "Ingredient Scaling",
+                "Step-by-Step Instructions",
+                "Real-time Cooking Guidance"
+              ]
+            }
+          `}
+        </Script>
+
+        {/* Performance monitoring */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XXXXXXXXXX');
+          `}
+        </Script>
+      </head>
       <body className={inter.className}>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
           <nav className="bg-white shadow-lg">
@@ -26,20 +85,23 @@ export default function RootLayout({
                   <Link
                     href="/"
                     className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                    aria-label="GuideMyRecipe.com Home"
                   >
-                    Recipe Extractor
+                    Guide My Recipe
                   </Link>
                 </div>
                 <div className="flex items-center space-x-4">
                   <Link
                     href="/"
                     className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                    aria-label="Home Page"
                   >
                     Home
                   </Link>
                   <Link
                     href="/about"
                     className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                    aria-label="About Us Page"
                   >
                     About
                   </Link>
@@ -50,14 +112,7 @@ export default function RootLayout({
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {children}
           </main>
-          <footer className="bg-white shadow-lg mt-auto">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-              <p className="text-center text-gray-500 text-sm">
-                © {new Date().getFullYear()} Recipe Extractor. All rights
-                reserved.
-              </p>
-            </div>
-          </footer>
+          <Footer />
         </div>
       </body>
     </html>
