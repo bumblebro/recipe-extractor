@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import CookingAnimation from "./components/CookingAnimation";
 import HowItWorks from "./components/HowItWorks";
@@ -25,7 +25,7 @@ interface RecipeData {
   };
 }
 
-export default function Home() {
+function RecipeForm() {
   const searchParams = useSearchParams();
   const [recipeUrl, setRecipeUrl] = useState("");
   const [instructions, setInstructions] = useState<string[]>([]);
@@ -74,17 +74,7 @@ export default function Home() {
   }, [searchParams, handleSubmit]);
 
   return (
-    <div className="space-y-8 mt-32">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Interactive Recipe Guide
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Enter a recipe URL below to get step-by-step cooking instructions with
-          interactive animations and timers.
-        </p>
-      </div>
-
+    <>
       <div className="max-w-2xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -165,8 +155,26 @@ export default function Home() {
           />
         </div>
       )}
+    </>
+  );
+}
 
-      {/* {recipeData && <RecipeDetails recipeData={recipeData} />} */}
+export default function Home() {
+  return (
+    <div className="space-y-8 mt-32">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Interactive Recipe Guide
+        </h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Enter a recipe URL below to get step-by-step cooking instructions with
+          interactive animations and timers.
+        </p>
+      </div>
+
+      <Suspense fallback={<div>Loading...</div>}>
+        <RecipeForm />
+      </Suspense>
 
       <HowItWorks />
     </div>

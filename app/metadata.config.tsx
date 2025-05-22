@@ -63,7 +63,7 @@ export function generateMetadata({
   const url = `${baseUrl}${path}`;
   const pageTitle = title
     ? `${title} | GuideMyRecipe.com`
-    : defaultMetadata.title;
+    : (defaultMetadata.title as { default: string }).default;
   const pageDescription =
     description || (defaultMetadata.description as string);
 

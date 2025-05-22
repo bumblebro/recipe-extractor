@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
@@ -8,6 +8,10 @@ import Logo from "./components/Logo";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const viewport: Viewport = {
+  themeColor: "#2563EB",
+};
+
 export const metadata: Metadata = {
   title: "GuideMyRecipe - AI-Powered Cooking Assistant",
   description:
@@ -15,7 +19,6 @@ export const metadata: Metadata = {
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
   },
-  themeColor: "#2563EB",
 };
 
 export default function RootLayout({
