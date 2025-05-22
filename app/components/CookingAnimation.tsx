@@ -5,8 +5,8 @@ import { AudioNotifications } from "./AudioNotifications";
 
 interface Ingredient {
   name: string;
-  quantity?: number;
-  unit?: string;
+  quantity: number | null;
+  unit: string | null;
   preparation?: string;
 }
 
@@ -49,12 +49,54 @@ interface ProcessedInstruction {
 
 interface CookingAnimationProps {
   instructions: string[];
+  ingredients: Ingredient[];
   onStepComplete: (stepIndex: number) => void;
+  servings?: number;
+  onServingsChange?: (servings: number) => void;
 }
+
+// Add helper function to format quantities as fractions
+const formatQuantity = (quantity: number): string => {
+  // Handle common fractions
+  if (quantity === 0.5) return "1/2";
+  if (quantity === 0.25) return "1/4";
+  if (quantity === 0.75) return "3/4";
+  if (quantity === 0.33) return "1/3";
+  if (quantity === 0.67) return "2/3";
+  if (quantity === 0.125) return "1/8";
+  if (quantity === 0.375) return "3/8";
+  if (quantity === 0.625) return "5/8";
+  if (quantity === 0.875) return "7/8";
+
+  // Handle mixed numbers (whole number + fraction)
+  if (quantity > 1) {
+    const whole = Math.floor(quantity);
+    const decimal = quantity - whole;
+
+    if (decimal === 0.5) return `${whole} 1/2`;
+    if (decimal === 0.25) return `${whole} 1/4`;
+    if (decimal === 0.75) return `${whole} 3/4`;
+    if (decimal === 0.33) return `${whole} 1/3`;
+    if (decimal === 0.67) return `${whole} 2/3`;
+    if (decimal === 0.125) return `${whole} 1/8`;
+    if (decimal === 0.375) return `${whole} 3/8`;
+    if (decimal === 0.625) return `${whole} 5/8`;
+    if (decimal === 0.875) return `${whole} 7/8`;
+  }
+
+  // For whole numbers, remove decimal places
+  if (Number.isInteger(quantity)) return quantity.toString();
+
+  // For other decimals, round to 1 decimal place
+  return quantity.toFixed(1);
+};
 
 export default function CookingAnimation({
   instructions,
+  ingredients,
   onStepComplete,
+  servings = 4,
+  onServingsChange,
 }: CookingAnimationProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
@@ -72,6 +114,11 @@ export default function CookingAnimation({
   );
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const lastUpdateTimeRef = useRef<number>(Date.now());
+  const [isChecklistExpanded, setIsChecklistExpanded] = useState(true);
+  const [checkedIngredients, setCheckedIngredients] = useState<Set<string>>(
+    new Set()
+  );
+  const [servingMultiplier, setServingMultiplier] = useState(1);
 
   // Memoize loading messages to prevent recreation on every render
   const loadingMessages = useMemo(
@@ -111,7 +158,7 @@ export default function CookingAnimation({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ instructions }),
+          body: JSON.stringify({ instructions, ingredients }),
         });
 
         if (!response.ok) {
@@ -138,7 +185,7 @@ export default function CookingAnimation({
     };
 
     processInstructions();
-  }, [instructions]);
+  }, [instructions, ingredients]);
 
   const getDurationInSeconds = (
     step: ProcessedInstruction
@@ -354,6 +401,51 @@ export default function CookingAnimation({
     return timeRemaining !== null ? formatTime(timeRemaining) : null;
   }, [timeRemaining]);
 
+  // Get all unique ingredients from all steps with their quantities
+  const allIngredients = useMemo(() => {
+    const ingredients = new Map<string, Ingredient>();
+    processedSteps.forEach((step) => {
+      step.ingredients?.forEach((ingredient) => {
+        const key = `${ingredient.name}-${ingredient.quantity}-${ingredient.unit}`;
+        if (!ingredients.has(key)) {
+          ingredients.set(key, ingredient);
+        }
+      });
+    });
+    return Array.from(ingredients.values());
+  }, [processedSteps]);
+
+  // Get ingredients needed for current step
+  const currentStepIngredients = useMemo(() => {
+    return new Set(
+      processedSteps[currentStep]?.ingredients?.map(
+        (i) => `${i.name}-${i.quantity}-${i.unit}`
+      ) || []
+    );
+  }, [currentStep, processedSteps]);
+
+  const toggleIngredient = (ingredient: Ingredient) => {
+    const key = `${ingredient.name}-${ingredient.quantity}-${ingredient.unit}`;
+    setCheckedIngredients((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(key)) {
+        newSet.delete(key);
+      } else {
+        newSet.add(key);
+      }
+      return newSet;
+    });
+  };
+
+  // Add serving size change handler
+  const handleServingsChange = (multiplier: number) => {
+    setServingMultiplier(multiplier);
+    onServingsChange?.(Math.round(servings * multiplier));
+  };
+
+  // Calculate current servings based on multiplier
+  const currentServings = Math.round(servings * servingMultiplier);
+
   if (error) {
     return (
       <div className="w-full max-w-5xl mx-auto p-8 bg-gradient-to-br from-white to-red-50 rounded-2xl shadow-xl">
@@ -404,7 +496,264 @@ export default function CookingAnimation({
         isStepComplete={isStepComplete}
         isTimerComplete={isTimerComplete}
       />
-      <div className="w-full max-w-5xl mx-auto p-4 sm:p-8 bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-xl">
+      <div className="w-full max-w-5xl mx-auto px-2 sm:px-8 py-4 sm:py-8 bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-xl">
+        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-blue-100 shadow-lg p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
+            <div className="flex items-center gap-2">
+              <svg
+                className="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+              <span className="text-gray-700 font-medium">Servings</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => handleServingsChange(0.5)}
+                  className={`px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border-2 transition-colors ${
+                    servingMultiplier === 0.5
+                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-500"
+                  }`}
+                  aria-label="Set servings to half"
+                >
+                  1/2x
+                </button>
+                <button
+                  onClick={() => handleServingsChange(1)}
+                  className={`px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border-2 transition-colors ${
+                    servingMultiplier === 1
+                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-500"
+                  }`}
+                  aria-label="Set servings to original"
+                >
+                  1x
+                </button>
+                <button
+                  onClick={() => handleServingsChange(2)}
+                  className={`px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border-2 transition-colors ${
+                    servingMultiplier === 2
+                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-500"
+                  }`}
+                  aria-label="Set servings to double"
+                >
+                  2x
+                </button>
+              </div>
+              <span className="text-sm text-gray-500">
+                ({currentServings} servings)
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-blue-100 shadow-lg overflow-hidden">
+          <button
+            onClick={() => setIsChecklistExpanded(!isChecklistExpanded)}
+            className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+            aria-expanded={isChecklistExpanded}
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <svg
+                  className="w-5 h-5 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Recipe Ingredients
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {checkedIngredients.size} of {allIngredients.length} gathered
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {checkedIngredients.size === allIngredients.length && (
+                <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium flex items-center gap-1">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  All gathered!
+                </span>
+              )}
+              <svg
+                className={`w-5 h-5 text-gray-500 transform transition-transform ${
+                  isChecklistExpanded ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+          </button>
+
+          <div
+            id="ingredient-checklist"
+            className={`transition-all duration-300 ease-in-out ${
+              isChecklistExpanded
+                ? "max-h-[500px] opacity-100"
+                : "max-h-0 opacity-0"
+            } overflow-hidden`}
+          >
+            <div className="p-4 pt-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {allIngredients.map((ingredient) => {
+                  const key = `${ingredient.name}-${ingredient.quantity}-${ingredient.unit}`;
+                  const isNeededInCurrentStep = currentStepIngredients.has(key);
+                  const originalQuantity = ingredient.quantity || 0;
+                  const scaledQuantity =
+                    originalQuantity * (currentServings / servings);
+
+                  return (
+                    <div
+                      key={key}
+                      className={`group relative flex items-start gap-3 p-3 rounded-lg transition-all ${
+                        checkedIngredients.has(key)
+                          ? "bg-green-50 border border-green-200"
+                          : isNeededInCurrentStep
+                          ? "bg-blue-50 border border-blue-200"
+                          : "bg-gray-50 border border-gray-200 hover:bg-gray-100"
+                      }`}
+                    >
+                      <button
+                        onClick={() => toggleIngredient(ingredient)}
+                        className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
+                          checkedIngredients.has(key)
+                            ? "bg-green-500 border-green-500"
+                            : "border-gray-300 group-hover:border-blue-500"
+                        }`}
+                        aria-label={`${
+                          checkedIngredients.has(key) ? "Uncheck" : "Check"
+                        } ${ingredient.name}`}
+                      >
+                        {checkedIngredients.has(key) && (
+                          <svg
+                            className="w-3 h-3 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                      <div className="flex-grow min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <span
+                              className={`block text-sm font-medium ${
+                                checkedIngredients.has(key)
+                                  ? "text-gray-500 line-through"
+                                  : "text-gray-700"
+                              }`}
+                            >
+                              {ingredient.name}
+                            </span>
+                            {ingredient.preparation && (
+                              <span className="text-xs text-gray-500">
+                                {ingredient.preparation}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            {ingredient.quantity && (
+                              <span
+                                className={`text-sm font-medium ${
+                                  checkedIngredients.has(key)
+                                    ? "text-gray-500"
+                                    : "text-gray-700"
+                                }`}
+                              >
+                                {formatQuantity(scaledQuantity)}
+                              </span>
+                            )}
+                            {ingredient.unit && (
+                              <span
+                                className={`text-sm ${
+                                  checkedIngredients.has(key)
+                                    ? "text-gray-500"
+                                    : "text-gray-600"
+                                }`}
+                              >
+                                {ingredient.unit}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        {isNeededInCurrentStep &&
+                          !checkedIngredients.has(key) && (
+                            <div className="mt-1.5">
+                              <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium flex items-center gap-1">
+                                <svg
+                                  className="w-3 h-3"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
+                                </svg>
+                                Needed now
+                              </span>
+                            </div>
+                          )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="mb-6 bg-white p-4 rounded-xl border border-blue-100 shadow-lg">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-lg font-semibold text-gray-800">
@@ -595,30 +944,36 @@ export default function CookingAnimation({
                       Ingredients Needed
                     </h4>
                     <ul className="space-y-1.5 sm:space-y-2">
-                      {currentStepData.ingredients.map((ingredient, index) => (
-                        <li
-                          key={index}
-                          className="text-sm sm:text-base text-gray-700 flex items-center gap-2"
-                        >
-                          <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full flex-shrink-0"></span>
-                          {ingredient.quantity && (
-                            <span className="font-medium">
-                              {ingredient.quantity}
-                            </span>
-                          )}
-                          {ingredient.unit && (
-                            <span className="text-gray-500 ml-1">
-                              {ingredient.unit}
-                            </span>
-                          )}
-                          <span className="ml-1">{ingredient.name}</span>
-                          {ingredient.preparation && (
-                            <span className="text-gray-500 ml-1">
-                              ({ingredient.preparation})
-                            </span>
-                          )}
-                        </li>
-                      ))}
+                      {currentStepData.ingredients.map((ingredient, index) => {
+                        const originalQuantity = ingredient.quantity || 0;
+                        const scaledQuantity =
+                          originalQuantity * (currentServings / servings);
+
+                        return (
+                          <li
+                            key={index}
+                            className="text-sm sm:text-base text-gray-700 flex items-center gap-2"
+                          >
+                            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full flex-shrink-0"></span>
+                            {ingredient.quantity && (
+                              <span className="font-medium text-gray-700">
+                                {formatQuantity(scaledQuantity)}
+                              </span>
+                            )}
+                            {ingredient.unit && (
+                              <span className="text-gray-600 ml-1">
+                                {ingredient.unit}
+                              </span>
+                            )}
+                            <span className="ml-1">{ingredient.name}</span>
+                            {ingredient.preparation && (
+                              <span className="text-gray-500 ml-1">
+                                ({ingredient.preparation})
+                              </span>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 )}

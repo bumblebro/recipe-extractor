@@ -7,8 +7,8 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 interface Ingredient {
   name: string;
-  quantity?: number;
-  unit?: string;
+  quantity: number | null;
+  unit: string | null;
   preparation?: string;
 }
 
@@ -34,24 +34,41 @@ For each instruction, follow this format:
 Example format:
 Step 4 of 20
 Ingredients:
-- beets
-- aluminum foil
+- 2 large beets
+- 1 sheet aluminum foil
 Action: wrap each beet individually in aluminum foil
 
 For each instruction, extract:
 1. The main action (e.g., "cut", "stir", "wrap")
 2. Duration if mentioned (in seconds, minutes, or hours)
-3. Ingredients involved (extract all ingredients mentioned in the step)
+3. Ingredients involved with their quantities and units:
+   - Always include quantity and unit fields (set to null if not specified)
+   - Extract quantities in various formats:
+     * "2 cups of flour" -> quantity: 2, unit: "cups"
+     * "1/2 teaspoon salt" -> quantity: 0.5, unit: "teaspoon"
+     * "3 large eggs" -> quantity: 3, unit: "large"
+     * "a pinch of salt" -> quantity: null, unit: "pinch"
+     * "to taste" -> quantity: null, unit: "to taste"
 4. Temperature if mentioned
 5. The type of animation needed
 6. Any additional notes or tips
 
 Ingredient Extraction Rules:
 - Extract all ingredients mentioned in each step
-- Include quantities if specified (e.g., "2 cups of flour")
+- ALWAYS include quantity and unit fields (set to null if not specified)
 - Include preparation state if mentioned (e.g., "chopped onions", "minced garlic")
 - Group related ingredients (e.g., "salt and pepper" as ["salt", "pepper"])
-- Include units of measurement when specified
+- Handle various quantity formats:
+  * Fractions (1/2, 1/4, etc.)
+  * Decimals (0.5, 1.5, etc.)
+  * Whole numbers
+  * Descriptive amounts ("a pinch", "to taste", etc.)
+- Handle various unit formats:
+  * Standard units (cups, tablespoons, teaspoons, etc.)
+  * Weight units (grams, ounces, pounds, etc.)
+  * Volume units (ml, liters, etc.)
+  * Descriptive units (large, medium, small, etc.)
+  * Special cases ("to taste", "as needed", etc.)
 
 Instruction Parsing Rules:
 - Break down complex instructions into clear, actionable steps
@@ -123,11 +140,18 @@ Return an array of JSON objects with the following structure for each instructio
 
 export async function POST(request: Request) {
   try {
-    const { instructions } = await request.json();
+    const { instructions, ingredients } = await request.json();
 
     if (!instructions || !Array.isArray(instructions)) {
       return NextResponse.json(
         { error: "Invalid input. Please provide an array of instructions." },
+        { status: 400 }
+      );
+    }
+
+    if (!ingredients || !Array.isArray(ingredients)) {
+      return NextResponse.json(
+        { error: "Invalid input. Please provide an array of ingredients." },
         { status: 400 }
       );
     }
@@ -140,9 +164,20 @@ export async function POST(request: Request) {
     });
 
     try {
-      const prompt = `${SYSTEM_PROMPT}\n\nInstructions:\n${instructions
+      const prompt = `${SYSTEM_PROMPT}\n\nIngredients List:\n${ingredients
+        .map((ingredient) => {
+          const quantity = ingredient.quantity ? `${ingredient.quantity} ` : "";
+          const unit = ingredient.unit ? `${ingredient.unit} ` : "";
+          const preparation = ingredient.preparation
+            ? `(${ingredient.preparation}) `
+            : "";
+          return `- ${quantity}${unit}${ingredient.name} ${preparation}`;
+        })
+        .join("\n")}\n\nInstructions:\n${instructions
         .map((instruction, index) => `${index + 1}. ${instruction}`)
-        .join("\n")}\n\nParse these instructions into the required format.`;
+        .join(
+          "\n"
+        )}\n\nParse these instructions into the required format, using the ingredients list above to ensure accurate quantity and unit information.`;
 
       const result = await model.generateContent(prompt);
       const response = await result.response;
@@ -177,12 +212,25 @@ export async function POST(request: Request) {
         const { duration, durationUnit } = extractDuration(instruction);
         const { temperature, temperatureUnit } =
           extractTemperature(instruction);
-        const ingredients = extractIngredients(instruction);
+        const stepIngredients = extractIngredients(instruction);
+
+        // Match ingredients with the provided ingredients list to get accurate quantities
+        const matchedIngredients = stepIngredients.map((stepIngredient) => {
+          const matchedIngredient = ingredients.find(
+            (ing) =>
+              ing.name.toLowerCase() === stepIngredient.name.toLowerCase()
+          );
+          return {
+            ...stepIngredient,
+            quantity: matchedIngredient?.quantity ?? stepIngredient.quantity,
+            unit: matchedIngredient?.unit ?? stepIngredient.unit,
+          };
+        });
 
         return {
           stepNumber: index + 1,
           totalSteps: instructions.length,
-          ingredients,
+          ingredients: matchedIngredients,
           action: instruction,
           animationType: determineAnimationType(instruction),
           duration,
@@ -324,22 +372,60 @@ function extractIngredients(instruction: string): Ingredient[] {
     const trimmed = part.trim();
     if (!trimmed) continue;
 
-    // Extract quantity and unit if present
-    const quantityMatch = trimmed.match(/^(\d+(?:\.\d+)?)\s*([a-zA-Z]+)/);
-    const quantity = quantityMatch ? parseFloat(quantityMatch[1]) : undefined;
-    const unit = quantityMatch ? quantityMatch[2] : undefined;
+    // Enhanced quantity and unit extraction
+    const quantityPatterns = [
+      // Fractions
+      /^(\d+)\/(\d+)\s*([a-zA-Z]+)/,
+      // Decimals
+      /^(\d+\.?\d*)\s*([a-zA-Z]+)/,
+      // Whole numbers
+      /^(\d+)\s*([a-zA-Z]+)/,
+      // Descriptive amounts
+      /^(a|an)\s+([a-zA-Z]+)/,
+      // Special cases
+      /^(to taste|as needed|pinch of|dash of)/i,
+    ];
+
+    let quantity: number | null = null;
+    let unit: string | null = null;
+    let name = trimmed;
+
+    for (const pattern of quantityPatterns) {
+      const match = trimmed.match(pattern);
+      if (match) {
+        if (pattern.toString().includes("\\/")) {
+          // Handle fractions
+          quantity = parseInt(match[1]) / parseInt(match[2]);
+          unit = match[3];
+          name = trimmed.slice(match[0].length).trim();
+        } else if (
+          pattern.toString().includes("to taste|as needed|pinch of|dash of")
+        ) {
+          // Handle special cases
+          quantity = null;
+          unit = match[1].toLowerCase();
+          name = trimmed.slice(match[0].length).trim();
+        } else if (pattern.toString().includes("a|an")) {
+          // Handle "a" or "an"
+          quantity = 1;
+          unit = match[2];
+          name = trimmed.slice(match[0].length).trim();
+        } else {
+          // Handle regular numbers
+          quantity = parseFloat(match[1]);
+          unit = match[2];
+          name = trimmed.slice(match[0].length).trim();
+        }
+        break;
+      }
+    }
 
     // Extract preparation method if present
-    const prepMatch = trimmed.match(
+    const prepMatch = name.match(
       /(?:finely|roughly|thinly)?\s*(chopped|diced|sliced|minced|grated|peeled)/i
     );
     const preparation = prepMatch ? prepMatch[1] : undefined;
 
-    // Extract ingredient name
-    let name = trimmed;
-    if (quantityMatch) {
-      name = trimmed.slice(quantityMatch[0].length).trim();
-    }
     if (prepMatch) {
       name = name.replace(prepMatch[0], "").trim();
     }

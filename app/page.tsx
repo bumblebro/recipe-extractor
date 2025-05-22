@@ -133,10 +133,16 @@ export default function Home() {
           </div>
         )}
       </div>
-      {instructions.length > 0 && (
+      {instructions.length > 0 && recipeData && (
         <div className="mt-8">
           <CookingAnimation
             instructions={instructions}
+            ingredients={recipeData.ingredients.map((ingredient) => ({
+              name: ingredient,
+              quantity: null,
+              unit: null,
+              preparation: undefined,
+            }))}
             onStepComplete={(stepIndex) => {
               console.log(`Step ${stepIndex + 1} completed`);
             }}

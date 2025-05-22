@@ -111,7 +111,7 @@ export async function POST(request: Request) {
     }
 
     const html = await response.text();
-    console.log("HTML length:", html);
+    // console.log("HTML length:", html);
 
     const $ = cheerio.load(html);
 
