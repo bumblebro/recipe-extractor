@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import CookingAnimation from "./components/CookingAnimation";
 import HowItWorks from "./components/HowItWorks";
 
 interface RecipeData {

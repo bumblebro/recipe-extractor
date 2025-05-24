@@ -158,7 +158,7 @@ export default function CookingAnimation({
   );
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const lastUpdateTimeRef = useRef<number>(Date.now());
-  const [isChecklistExpanded, setIsChecklistExpanded] = useState(true);
+  const [isChecklistExpanded, setIsChecklistExpanded] = useState(false);
   const [isInstructionsExpanded, setIsInstructionsExpanded] = useState(false);
   const [checkedIngredients, setCheckedIngredients] = useState<Set<string>>(
     new Set()
@@ -451,9 +451,20 @@ export default function CookingAnimation({
     const ingredients = new Map<string, Ingredient>();
     processedSteps.forEach((step) => {
       step.ingredients?.forEach((ingredient) => {
-        const key = `${ingredient.name}-${ingredient.quantity}-${ingredient.unit}`;
+        // Create a unique key based on name and preparation
+        const key = `${ingredient.name}-${ingredient.preparation || ""}`;
         if (!ingredients.has(key)) {
           ingredients.set(key, ingredient);
+        } else {
+          // If ingredient exists, combine quantities if they have the same unit
+          const existing = ingredients.get(key)!;
+          if (
+            existing.unit === ingredient.unit &&
+            existing.quantity &&
+            ingredient.quantity
+          ) {
+            existing.quantity += ingredient.quantity;
+          }
         }
       });
     });
@@ -993,89 +1004,6 @@ export default function CookingAnimation({
             <span>{Math.round(overallProgress)}% Complete</span>
           </div>
         </div>
-        <div className="mb-6 sm:mb-8">
-          <div className="flex justify-end gap-4">
-            <button
-              onClick={handlePreviousStep}
-              disabled={currentStep === 0 || timeRemaining !== null}
-              className="px-4 py-2 bg-gray-500 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md hover:bg-gray-600 flex items-center gap-2"
-              aria-label="Go to previous step"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              <span className="hidden sm:inline">Previous Step</span>
-              <span className="sm:hidden">Prev</span>
-            </button>
-            <button
-              onClick={handleNextStep}
-              disabled={
-                currentStep === processedSteps.length - 1 ||
-                (timeRemaining !== null && !isStepComplete)
-              }
-              className={`px-6 py-2 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-2 ${
-                currentStep === processedSteps.length - 1
-                  ? "bg-green-500 hover:bg-green-600"
-                  : "bg-blue-500 hover:bg-blue-600"
-              }`}
-              aria-label={
-                timeRemaining !== null && !isStepComplete
-                  ? "Waiting for step to complete"
-                  : currentStep === processedSteps.length - 1
-                  ? "Complete recipe"
-                  : "Go to next step"
-              }
-            >
-              {currentStep === processedSteps.length - 1 ? (
-                <>
-                  <span className="hidden sm:inline">Complete Recipe</span>
-                  <span className="sm:hidden">Complete</span>
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </>
-              ) : (
-                <>
-                  <span className="hidden sm:inline">Next Step</span>
-                  <span className="sm:hidden">Next</span>
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
         <div className="bg-white p-4 sm:p-8 rounded-xl border border-blue-100 shadow-lg">
           <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8">
             <div className="flex-shrink-0 bg-blue-50 p-3 sm:p-4 rounded-xl h-36 w-36 sm:h-48 sm:w-48 relative">
@@ -1251,13 +1179,13 @@ export default function CookingAnimation({
               )}
               {timeRemaining !== null && (
                 <div className="mt-4 sm:mt-6 w-full">
-                  <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="flex items-center justify-between gap-2 sm:gap-4">
                     <div
-                      className="text-2xl sm:text-4xl font-mono bg-gray-100 px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-inner flex items-center gap-2"
+                      className="text-xl sm:text-4xl font-mono bg-gray-100 px-3 sm:px-6 py-1.5 sm:py-3 rounded-lg shadow-inner flex items-center gap-1.5 sm:gap-2 flex-1"
                       aria-label={`Time remaining: ${formattedTimeRemaining}`}
                     >
                       <svg
-                        className="w-4 h-4 sm:w-6 sm:h-6 text-gray-500 flex-shrink-0"
+                        className="w-3.5 h-3.5 sm:w-6 sm:h-6 text-gray-500 flex-shrink-0"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -1273,13 +1201,13 @@ export default function CookingAnimation({
                     </div>
                     <button
                       onClick={togglePause}
-                      className="px-3 sm:px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md flex items-center gap-2"
+                      className="px-2 sm:px-4 py-1.5 sm:py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md flex items-center gap-1 sm:gap-2 flex-1 justify-center"
                       aria-label={isPaused ? "Resume timer" : "Pause timer"}
                     >
                       {isPaused ? (
                         <>
                           <svg
-                            className="w-4 h-4 sm:w-5 sm:h-5"
+                            className="w-3.5 h-3.5 sm:w-5 sm:h-5"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1297,12 +1225,12 @@ export default function CookingAnimation({
                               d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                           </svg>
-                          <span className="hidden sm:inline">Resume</span>
+                          <span className="text-sm sm:text-base">Resume</span>
                         </>
                       ) : (
                         <>
                           <svg
-                            className="w-4 h-4 sm:w-5 sm:h-5"
+                            className="w-3.5 h-3.5 sm:w-5 sm:h-5"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1314,15 +1242,88 @@ export default function CookingAnimation({
                               d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                           </svg>
-                          <span className="hidden sm:inline">Pause</span>
+                          <span className="text-sm sm:text-base">Pause</span>
                         </>
                       )}
                     </button>
                     <button
                       onClick={handleCompleteStep}
-                      className="px-3 sm:px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-md flex items-center gap-2"
+                      className="px-2 sm:px-4 py-1.5 sm:py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-md flex items-center gap-1 sm:gap-2 flex-1 justify-center"
                       aria-label="Complete step"
                     >
+                      <svg
+                        className="w-3.5 h-3.5 sm:w-5 sm:h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <span className="text-sm sm:text-base">Complete</span>
+                    </button>
+                  </div>
+                  <div className="mt-2 w-full bg-gray-200 rounded-full h-2 sm:h-2.5">
+                    <div
+                      className="bg-blue-500 h-2 sm:h-2.5 rounded-full transition-all duration-1000 ease-linear"
+                      style={{ width: `${progress}%` }}
+                      role="progressbar"
+                      aria-valuenow={Math.round(progress)}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-label={`Step progress: ${Math.round(progress)}%`}
+                    />
+                  </div>
+                </div>
+              )}
+              <div className="flex justify-between gap-2 sm:gap-4 mt-4">
+                <button
+                  onClick={handlePreviousStep}
+                  disabled={currentStep === 0 || timeRemaining !== null}
+                  className="px-2 sm:px-4 py-1.5 sm:py-2 bg-gray-500 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md hover:bg-gray-600 flex items-center gap-1 sm:gap-2"
+                  aria-label="Go to previous step"
+                >
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                  <span className="text-sm sm:text-base">Previous</span>
+                </button>
+                <button
+                  onClick={handleNextStep}
+                  disabled={
+                    currentStep === processedSteps.length - 1 ||
+                    (timeRemaining !== null && !isStepComplete)
+                  }
+                  className={`px-3 sm:px-6 py-1.5 sm:py-2 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-1 sm:gap-2 ${
+                    currentStep === processedSteps.length - 1
+                      ? "bg-green-500 hover:bg-green-600"
+                      : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                  aria-label={
+                    timeRemaining !== null && !isStepComplete
+                      ? "Waiting for step to complete"
+                      : currentStep === processedSteps.length - 1
+                      ? "Complete recipe"
+                      : "Go to next step"
+                  }
+                >
+                  {currentStep === processedSteps.length - 1 ? (
+                    <>
+                      <span className="text-sm sm:text-base">Complete</span>
                       <svg
                         className="w-4 h-4 sm:w-5 sm:h-5"
                         fill="none"
@@ -1336,23 +1337,27 @@ export default function CookingAnimation({
                           d="M5 13l4 4L19 7"
                         />
                       </svg>
-                      <span className="hidden sm:inline">Complete Step</span>
-                      <span className="sm:hidden">Complete</span>
-                    </button>
-                  </div>
-                  <div className="mt-2 w-full bg-gray-200 rounded-full h-2.5">
-                    <div
-                      className="bg-blue-500 h-2.5 rounded-full transition-all duration-1000 ease-linear"
-                      style={{ width: `${progress}%` }}
-                      role="progressbar"
-                      aria-valuenow={Math.round(progress)}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      aria-label={`Step progress: ${Math.round(progress)}%`}
-                    />
-                  </div>
-                </div>
-              )}
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-sm sm:text-base">Next</span>
+                      <svg
+                        className="w-4 h-4 sm:w-5 sm:h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>{" "}

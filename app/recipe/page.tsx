@@ -3,7 +3,6 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CookingAnimation from "../components/CookingAnimation";
-import RecipeDetails from "../components/RecipeDetails";
 
 interface RecipeData {
   name: string;
@@ -109,7 +108,7 @@ export default function RecipePage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto  sm:px-6 lg:px-8 py-8">
       {/* <RecipeDetails recipeData={recipeData} /> */}
       <div className="mt-8">
         <CookingAnimation
