@@ -20,6 +20,28 @@ export const metadata: Metadata = {
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
   },
+  openGraph: {
+    title: "GuideMyRecipe - AI-Powered Cooking Assistant",
+    description:
+      "Transform any recipe into an interactive cooking guide. Extract, organize, and follow recipes from any website with our AI-powered cooking assistant.",
+    type: "website",
+    url: "https://guidemyrecipe.com",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "GuideMyRecipe - AI-Powered Cooking Assistant",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GuideMyRecipe - AI-Powered Cooking Assistant",
+    description:
+      "Transform any recipe into an interactive cooking guide. Extract, organize, and follow recipes from any website with our AI-powered cooking assistant.",
+    images: ["/og-image.jpg"],
+  },
 };
 
 export default function RootLayout({
@@ -48,7 +70,7 @@ export default function RootLayout({
             {
               "@context": "https://schema.org",
               "@type": "WebApplication",
-              "name": "GuideMyRecipe.com",
+              "name": "GuideMyRecipe",
               "url": "https://guidemyrecipe.com",
               "description": "Transform any recipe into an interactive cooking guide. Extract, organize, and follow recipes from any website with our AI-powered cooking assistant.",
               "applicationCategory": "CookingApplication",
@@ -64,6 +86,24 @@ export default function RootLayout({
                 "Ingredient Scaling",
                 "Step-by-Step Instructions",
                 "Real-time Cooking Guidance"
+              ],
+              "author": {
+                "@type": "Organization",
+                "name": "GuideMyRecipe",
+                "url": "https://guidemyrecipe.com"
+              },
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "https://guidemyrecipe.com?url={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+              },
+              "sameAs": [
+                "https://twitter.com/guidemyrecipe",
+                "https://facebook.com/guidemyrecipe",
+                "https://instagram.com/guidemyrecipe"
               ]
             }
           `}
@@ -85,7 +125,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
-          <nav className="bg-white shadow-lg sticky top-0 z-50">
+          <nav className="bg-white shadow-lg">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-16">
                 <div className="flex items-center">
@@ -115,7 +155,7 @@ export default function RootLayout({
           </main>
           <Footer />
         </div>
-      </body>{" "}
+      </body>
       {process.env.NODE_ENV === "production" && (
         <GoogleAnalytics gaId="G-X18BDWVHGK" />
       )}
