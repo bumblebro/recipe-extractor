@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import CookingAnimation from "../components/CookingAnimation";
 
 interface RecipeData {
@@ -25,7 +25,7 @@ interface RecipeData {
   };
 }
 
-export default function RecipePage() {
+function RecipeContent() {
   const searchParams = useSearchParams();
   const [recipeData, setRecipeData] = useState<RecipeData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -108,7 +108,7 @@ export default function RecipePage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto  sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
       {/* <RecipeDetails recipeData={recipeData} /> */}
       <div className="mt-8">
         <CookingAnimation
@@ -126,5 +126,20 @@ export default function RecipePage() {
         />
       </div>
     </div>
+  );
+}
+
+export default function RecipePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+          <p className="text-gray-600 text-lg font-medium">Loading recipe...</p>
+        </div>
+      }
+    >
+      <RecipeContent />
+    </Suspense>
   );
 }
