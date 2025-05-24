@@ -796,24 +796,21 @@ export default function CookingAnimation({
                   return (
                     <div
                       key={key}
-                      className={`group relative flex items-start gap-3 p-3 rounded-lg transition-all ${
+                      className={`group relative flex items-start gap-3 p-3 rounded-lg transition-all cursor-pointer ${
                         checkedIngredients.has(key)
                           ? "bg-green-50 border border-green-200"
                           : isNeededInCurrentStep
                           ? "bg-blue-50 border border-blue-200"
                           : "bg-gray-50 border border-gray-200 hover:bg-gray-100"
                       }`}
+                      onClick={() => toggleIngredient(ingredient)}
                     >
-                      <button
-                        onClick={() => toggleIngredient(ingredient)}
+                      <div
                         className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
                           checkedIngredients.has(key)
                             ? "bg-green-500 border-green-500"
                             : "border-gray-300 group-hover:border-blue-500"
                         }`}
-                        aria-label={`${
-                          checkedIngredients.has(key) ? "Uncheck" : "Check"
-                        } ${ingredient.name}`}
                       >
                         {checkedIngredients.has(key) && (
                           <svg
@@ -830,7 +827,7 @@ export default function CookingAnimation({
                             />
                           </svg>
                         )}
-                      </button>
+                      </div>
                       <div className="flex-grow min-w-0">
                         <div className="flex items-start justify-between gap-2">
                           <div>
