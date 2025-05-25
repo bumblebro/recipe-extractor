@@ -126,7 +126,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       <div className="space-y-8 ">
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8 w-full">
+        {/* <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8 w-full">
           <div className="flex justify-center w-full">
             <div className="flex items-center w-full max-w-7xl">
               <div className="flex-shrink-0">
@@ -197,7 +197,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="text-center mt-32">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Interactive Recipe Guide
