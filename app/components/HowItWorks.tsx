@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 interface Step {
   title: string;
@@ -41,6 +42,18 @@ interface UsageExample {
   example: string;
   icon: React.ReactNode;
 }
+
+const recipeLinks: Record<string, string> = {
+  "spaghetti-carbonara":
+    "https://www.simplyrecipes.com/recipes/spaghetti_alla_carbonara/",
+  "classic-pancakes":
+    "https://www.allrecipes.com/recipe/21014/good-old-fashioned-pancakes/",
+  "vegetable-stir-fry": "https://www.loveandlemons.com/vegetable-stir-fry/",
+  "chicken-noodle-soup":
+    "https://www.delish.com/cooking/recipe-ideas/a19665918/easy-chicken-noodle-soup-recipe/",
+  "chocolate-chip-cookies":
+    "https://sallysbakingaddiction.com/chocolate-chip-cookies/",
+};
 
 const steps: Step[] = [
   {
@@ -633,6 +646,44 @@ const renderUsageGuide = () => (
   </div>
 );
 
+const featuredrecipes = () => (
+  <div className="mt-16">
+    <h2 className="text-2xl font-bold text-blue-800 mb-8 text-center tracking-tight drop-shadow-sm">
+      More Featured Recipes
+    </h2>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+      {Object.entries(recipeLinks).map(([slug, url], idx) => (
+        <Link
+          key={slug}
+          href={`/examples/recipe/${slug}`}
+          className="group block bg-gradient-to-br from-blue-50 to-white rounded-2xl shadow-lg hover:shadow-2xl border border-blue-100 p-6 transition-all duration-200 hover:-translate-y-1"
+        >
+          <div className="flex flex-col items-center">
+            <div className="w-20 h-20 bg-blue-100 rounded-full mb-4 flex items-center justify-center shadow-inner">
+              <span className="text-3xl select-none">
+                {idx === 0 && "🍝"}
+                {idx === 1 && "🥞"}
+                {idx === 2 && "🥦"}
+                {idx === 3 && "🍲"}
+                {idx === 4 && "🍪"}
+              </span>
+            </div>
+            <h3 className="text-base font-bold text-blue-700 mb-1 capitalize text-center group-hover:text-blue-900 transition-colors">
+              {slug.replace(/-/g, " ")}
+            </h3>
+            <p className="text-xs text-gray-500 text-center truncate w-full mb-2">
+              {url.replace(/^https?:\/\/(www\.)?/, "")}
+            </p>
+            <span className="mt-2 inline-block bg-blue-600 group-hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-full shadow transition-colors">
+              View Recipe
+            </span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  </div>
+);
+
 const renderStats = () => (
   <div className="py-16 bg-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -748,6 +799,7 @@ export default function HowItWorks() {
     <div className="bg-gradient-to-br from-blue-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {renderUsageGuide()}
+        {featuredrecipes()}
 
         {renderSection(
           "How It Works",

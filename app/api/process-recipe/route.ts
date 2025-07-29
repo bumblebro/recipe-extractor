@@ -255,83 +255,69 @@ function determineAnimationType(
 ): ProcessedInstruction["animationType"] {
   const lowerInstruction = instruction.toLowerCase();
 
-  if (
-    lowerInstruction.includes("cut") ||
-    lowerInstruction.includes("chop") ||
-    lowerInstruction.includes("slice")
-  ) {
-    return "cutting";
-  }
-  if (lowerInstruction.includes("stir") || lowerInstruction.includes("mix")) {
-    return "stirring";
-  }
-  if (
-    lowerInstruction.includes("wait") ||
-    lowerInstruction.includes("rest") ||
-    lowerInstruction.includes("cool")
-  ) {
-    return "waiting";
-  }
-  if (
-    lowerInstruction.includes("heat") ||
-    lowerInstruction.includes("cook") ||
-    lowerInstruction.includes("boil")
-  ) {
-    return "heating";
-  }
-  if (lowerInstruction.includes("pour") || lowerInstruction.includes("add")) {
-    return "pouring";
-  }
-  if (
-    lowerInstruction.includes("season") ||
-    lowerInstruction.includes("salt") ||
-    lowerInstruction.includes("pepper")
-  ) {
-    return "seasoning";
-  }
-  if (lowerInstruction.includes("whisk") || lowerInstruction.includes("beat")) {
-    return "whisking";
-  }
-  if (
-    lowerInstruction.includes("knead") ||
-    lowerInstruction.includes("dough")
-  ) {
-    return "kneading";
-  }
-  if (
-    lowerInstruction.includes("roll") ||
-    lowerInstruction.includes("pastry")
-  ) {
-    return "rolling";
-  }
-  if (
-    lowerInstruction.includes("grate") ||
-    lowerInstruction.includes("shred")
-  ) {
-    return "grating";
-  }
-  if (lowerInstruction.includes("peel") || lowerInstruction.includes("skin")) {
-    return "peeling";
-  }
-  if (
-    lowerInstruction.includes("fold") ||
-    lowerInstruction.includes("incorporate")
-  ) {
-    return "folding";
-  }
-  if (
-    lowerInstruction.includes("saute") ||
-    lowerInstruction.includes("fry") ||
-    lowerInstruction.includes("pan-fry")
-  ) {
-    return "sauteing";
-  }
-  if (
-    lowerInstruction.includes("serve") ||
-    lowerInstruction.includes("plate") ||
-    lowerInstruction.includes("dish")
-  ) {
-    return "serving";
+  const animationKeywords: Record<
+    | "cutting"
+    | "stirring"
+    | "waiting"
+    | "heating"
+    | "mixing"
+    | "pouring"
+    | "seasoning"
+    | "whisking"
+    | "kneading"
+    | "rolling"
+    | "grating"
+    | "peeling"
+    | "folding"
+    | "sauteing"
+    | "cooling"
+    | "blending"
+    | "steaming"
+    | "mashing"
+    | "straining"
+    | "measuring"
+    | "sifting"
+    | "beating"
+    | "crushing"
+    | "shredding"
+    | "juicing"
+    | "serving",
+    string[]
+  > = {
+    cutting: ["chop", "slice", "dice"],
+    stirring: ["stir", "mix"],
+    waiting: ["rest", "marinate", "cool"],
+    heating: ["boil", "simmer", "cook", "heat"],
+    mixing: ["combine", "mix"],
+    pouring: ["pour", "add liquid"],
+    seasoning: ["season", "add salt", "add spices"],
+    whisking: ["beat", "whisk"],
+    kneading: ["knead"],
+    rolling: ["roll"],
+    grating: ["grate"],
+    peeling: ["peel"],
+    folding: ["fold"],
+    sauteing: ["fry", "saute", "pan-fry"],
+    cooling: ["cool", "chill"],
+    blending: ["blend", "puree"],
+    steaming: ["steam"],
+    mashing: ["mash"],
+    straining: ["strain", "drain"],
+    measuring: ["measure"],
+    sifting: ["sift"],
+    beating: ["beat eggs", "whip cream"],
+    crushing: ["crush", "smash"],
+    shredding: ["shred"],
+    juicing: ["juice"],
+    serving: ["plate", "serve"],
+  };
+
+  for (const [type, keywords] of Object.entries(animationKeywords)) {
+    for (const keyword of keywords) {
+      if (lowerInstruction.includes(keyword)) {
+        return type as ProcessedInstruction["animationType"];
+      }
+    }
   }
 
   return undefined;
