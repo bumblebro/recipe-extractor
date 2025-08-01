@@ -69,7 +69,7 @@ export async function POST(request: Request) {
   try {
     // Add timeout to fetch request
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 second timeout
 
     const response = await fetch(url, {
       signal: controller.signal,
@@ -89,7 +89,6 @@ export async function POST(request: Request) {
         "Cache-Control": "max-age=0",
       },
     });
-
     clearTimeout(timeoutId);
 
     if (!response.ok) {

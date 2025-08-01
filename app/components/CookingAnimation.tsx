@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import CookingAnimationLottie from "./CookingAnimationLottie";
 import { AudioNotifications } from "./AudioNotifications";
+import CookingAnimationPNG from "./CookingAnimationPNG";
 
 interface Ingredient {
   name: string;
@@ -1001,17 +1002,16 @@ export default function CookingAnimation({
             <span>{Math.round(overallProgress)}% Complete</span>
           </div>
         </div>
-        <div className="bg-white p-4 sm:p-8 rounded-xl border border-blue-100 shadow-lg">
+        <div className="bg-gradient-to-br from-blue-50 via-white to-blue-100 p-4 sm:p-8 rounded-xl border border-blue-200 shadow-xl">
           <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8">
-            <div className="flex-shrink-0 bg-blue-50 p-3 sm:p-4 rounded-xl h-36 w-36 sm:h-48 sm:w-48 relative">
-              <CookingAnimationLottie
+            <div className="flex-shrink-0 bg-gradient-to-br from-blue-100 via-white to-blue-200 p-3 sm:p-4 rounded-xl h-36 w-36 sm:h-48 sm:w-48 relative border border-blue-300">
+              <CookingAnimationPNG
                 animationType={
                   processedSteps[currentStep]?.animationType || "waiting"
                 }
-                isPaused={isPaused}
-              />
-              <div className="absolute bottom-2 left-2 right-2 bg-white/80 backdrop-blur-sm rounded-lg p-1.5 sm:p-2 text-center">
-                <span className="text-xs sm:text-sm font-medium text-gray-700">
+              ></CookingAnimationPNG>
+              <div className="absolute bottom-2 left-2 right-2 bg-blue-50/80 backdrop-blur-sm rounded-lg p-1.5 sm:p-2 text-center border border-blue-200">
+                <span className="text-xs sm:text-sm font-semibold text-blue-700">
                   {processedSteps[currentStep]?.animationType
                     ? processedSteps[currentStep].animationType
                         .charAt(0)
