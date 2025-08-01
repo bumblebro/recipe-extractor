@@ -74,12 +74,13 @@ const recipeMeta: Record<string, { title: string; description: string }> = {
   },
 };
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
-  const meta = recipeMeta[params.slug] || {
+type tParams = Promise<{ slug: string }>;
+
+export const dynamic = "force-static";
+
+export async function generateMetadata({ params }: { params: tParams }) {
+  const { slug } = await params;
+  const meta = recipeMeta[slug] || {
     title: "Recipe Example – GuideMyRecipe",
     description:
       "See how GuideMyRecipe transforms recipes into step-by-step kitchen instructions.",
@@ -90,7 +91,7 @@ export async function generateMetadata({
     openGraph: {
       title: meta.title,
       description: meta.description,
-      url: `https://guidemyrecipe.com/examples/recipe/${params.slug}`,
+      url: `https://guidemyrecipe.com/examples/recipe/${slug}`,
       images: [
         {
           url: "/og-image.jpg",
@@ -109,17 +110,18 @@ export async function generateMetadata({
   };
 }
 
-export default function RecipePage({ params }: { params: { slug: string } }) {
+export default async function RecipePage({ params }: { params: tParams }) {
+  const { slug } = await params;
   return (
     <Suspense
       fallback={
         <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-500 border-t-transparent"></div>
           <p className="text-gray-600 text-lg font-medium">Loading recipe...</p>
         </div>
       }
     >
-      <RecipeClient slug={params.slug} />
+      <RecipeClient slug={slug} />
     </Suspense>
   );
 }

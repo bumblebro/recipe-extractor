@@ -65,6 +65,13 @@ export default function Navbar() {
               About
             </Link>
             <Link
+              href="/featured"
+              className="text-gray-600 hover:text-slate-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              aria-label="Featured Recipes Page"
+            >
+              Featured Recipes
+            </Link>
+            <Link
               href="/"
               className="ml-2 border border-slate-600 text-slate-600 px-4 py-2 rounded-md text-sm font-semibold shadow transition-colors bg-transparent hover:bg-slate-50"
               aria-label="Try your own recipe"
@@ -93,6 +100,14 @@ export default function Navbar() {
               onClick={() => setMenuOpen(false)}
             >
               About
+            </Link>
+            <Link
+              href="/featured"
+              className="block text-gray-700 hover:text-slate-600 px-3 py-2 rounded-md text-base font-medium transition-colors"
+              aria-label="Featured Recipes Page"
+              onClick={() => setMenuOpen(false)}
+            >
+              Featured Recipes
             </Link>
             <Link
               href="/"

@@ -81,7 +81,7 @@ export default function RecipeClient({ slug }: { slug: string }) {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-500 border-t-transparent"></div>
         <p className="text-gray-600 text-lg font-medium">Loading recipe...</p>
       </div>
     );
@@ -139,8 +139,8 @@ export default function RecipeClient({ slug }: { slug: string }) {
         />
       </div>
       <div className="mt-12 flex flex-col items-center justify-center">
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl shadow p-6 max-w-xl text-center">
-          <h3 className="text-xl font-semibold text-blue-700 mb-2">
+        <div className="bg-slate-50 border border-slate-200 rounded-2xl shadow p-6 max-w-xl text-center">
+          <h3 className="text-xl font-semibold text-slate-700 mb-2">
             Want to try another recipe?
           </h3>
           <p className="text-gray-700 mb-4">
@@ -149,7 +149,7 @@ export default function RecipeClient({ slug }: { slug: string }) {
           </p>
           <Link
             href="/"
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow transition-colors"
+            className="inline-block bg-slate-600 hover:bg-slate-700 text-white font-semibold px-6 py-3 rounded-lg shadow transition-colors"
             aria-label="Return to home page"
           >
             ← Go to Home
@@ -157,7 +157,7 @@ export default function RecipeClient({ slug }: { slug: string }) {
         </div>
       </div>
       <div className="mt-16">
-        <h2 className="text-2xl font-bold text-blue-800 mb-8 text-center tracking-tight drop-shadow-sm">
+        <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center tracking-tight drop-shadow-sm">
           More Featured Recipes
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
@@ -165,10 +165,10 @@ export default function RecipeClient({ slug }: { slug: string }) {
             <Link
               key={slug}
               href={`/examples/recipe/${slug}`}
-              className="group block bg-gradient-to-br from-blue-50 to-white rounded-2xl shadow-lg hover:shadow-2xl border border-blue-100 p-6 transition-all duration-200 hover:-translate-y-1"
+              className="group block bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-lg hover:shadow-2xl border border-slate-100 p-6 transition-all duration-200 hover:-translate-y-1"
             >
               <div className="flex flex-col items-center">
-                <div className="w-20 h-20 bg-blue-100 rounded-full mb-4 flex items-center justify-center shadow-inner">
+                <div className="w-20 h-20 bg-slate-100 rounded-full mb-4 flex items-center justify-center shadow-inner">
                   <span className="text-3xl select-none">
                     {idx === 0 && "🍝"}
                     {idx === 1 && "🥞"}
@@ -177,13 +177,13 @@ export default function RecipeClient({ slug }: { slug: string }) {
                     {idx === 4 && "🍪"}
                   </span>
                 </div>
-                <h3 className="text-base font-bold text-blue-700 mb-1 capitalize text-center group-hover:text-blue-900 transition-colors">
+                <h3 className="text-base font-bold text-slate-700 mb-1 capitalize text-center group-hover:text-slate-900 transition-colors">
                   {slug.replace(/-/g, " ")}
                 </h3>
                 <p className="text-xs text-gray-500 text-center truncate w-full mb-2">
                   {url.replace(/^https?:\/\/(www\.)?/, "")}
                 </p>
-                <span className="mt-2 inline-block bg-blue-600 group-hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-full shadow transition-colors">
+                <span className="mt-2 inline-block bg-slate-600 group-hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2 rounded-full shadow transition-colors">
                   View Recipe
                 </span>
               </div>

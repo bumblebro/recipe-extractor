@@ -69,7 +69,7 @@ function RecipeContent() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-500 border-t-transparent"></div>
         <p className="text-gray-600 text-lg font-medium">Loading recipe...</p>
       </div>
     );
@@ -127,8 +127,8 @@ function RecipeContent() {
         />
       </div>
       <div className="mt-12 flex flex-col items-center justify-center">
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl shadow p-6 max-w-xl text-center">
-          <h3 className="text-xl font-semibold text-blue-700 mb-2">
+        <div className="bg-slate-50 border border-slate-200 rounded-2xl shadow p-6 max-w-xl text-center">
+          <h3 className="text-xl font-semibold text-slate-700 mb-2">
             Want to try another recipe?
           </h3>
           <p className="text-gray-700 mb-4">
@@ -137,7 +137,7 @@ function RecipeContent() {
           </p>
           <Link
             href="/"
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow transition-colors"
+            className="inline-block bg-slate-600 hover:bg-slate-700 text-white font-semibold px-6 py-3 rounded-lg shadow transition-colors"
             aria-label="Return to home page"
           >
             ← Go to Home
@@ -153,7 +153,7 @@ export default function RecipePage() {
     <Suspense
       fallback={
         <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-500 border-t-transparent"></div>
           <p className="text-gray-600 text-lg font-medium">Loading recipe...</p>
         </div>
       }
