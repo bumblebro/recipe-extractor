@@ -647,39 +647,49 @@ const renderUsageGuide = () => (
 );
 
 const featuredrecipes = () => (
-  <div className="mt-16">
-    <h2 className="text-2xl font-bold text-blue-800 mb-8 text-center tracking-tight drop-shadow-sm">
-      More Featured Recipes
-    </h2>
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-      {Object.entries(recipeLinks).map(([slug, url], idx) => (
-        <Link
-          key={slug}
-          href={`/examples/recipe/${slug}`}
-          className="group block bg-gradient-to-br from-blue-50 to-white rounded-2xl shadow-lg hover:shadow-2xl border border-blue-100 p-6 transition-all duration-200 hover:-translate-y-1"
-        >
-          <div className="flex flex-col items-center">
-            <div className="w-20 h-20 bg-blue-100 rounded-full mb-4 flex items-center justify-center shadow-inner">
-              <span className="text-3xl select-none">
-                {idx === 0 && "🍝"}
-                {idx === 1 && "🥞"}
-                {idx === 2 && "🥦"}
-                {idx === 3 && "🍲"}
-                {idx === 4 && "🍪"}
+  <div className="mt-16 py-16 bg-gradient-to-br from-blue-50 to-white">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl sm:text-4xl font-bold text-blue-800 mb-4 tracking-tight drop-shadow-sm">
+          More Featured Recipes
+        </h2>
+        <p className="text-lg text-blue-700 max-w-2xl mx-auto font-light">
+          Explore a variety of delicious recipes curated for you. Click any
+          recipe to view its interactive guide!
+        </p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        {Object.entries(recipeLinks).map(([slug, url], idx) => (
+          <Link
+            key={slug}
+            href={`/examples/recipe/${slug}`}
+            className="group block bg-white rounded-2xl shadow-lg hover:shadow-2xl border border-blue-100 p-6 transition-all duration-300 hover:-translate-y-1 transform hover:scale-105"
+          >
+            <div className="flex flex-col items-center text-center gap-4">
+              <div className="relative">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center shadow-inner">
+                  <span className="text-3xl select-none">
+                    {idx === 0 && "🍝"}
+                    {idx === 1 && "🥞"}
+                    {idx === 2 && "🥦"}
+                    {idx === 3 && "🍲"}
+                    {idx === 4 && "🍪"}
+                  </span>
+                </div>
+              </div>
+              <h3 className="text-lg font-bold text-blue-700 mb-1 capitalize group-hover:text-blue-900 transition-colors">
+                {slug.replace(/-/g, " ")}
+              </h3>
+              <p className="text-xs text-gray-500 text-center truncate w-full mb-2 font-light">
+                {url.replace(/^https?:\/\/(www\.)?/, "")}
+              </p>
+              <span className="mt-2 inline-block border border-blue-600 text-blue-600 bg-white group-hover:bg-blue-50 text-xs font-semibold px-4 py-2 rounded-full shadow transition-colors">
+                View Recipe
               </span>
             </div>
-            <h3 className="text-base font-bold text-blue-700 mb-1 capitalize text-center group-hover:text-blue-900 transition-colors">
-              {slug.replace(/-/g, " ")}
-            </h3>
-            <p className="text-xs text-gray-500 text-center truncate w-full mb-2">
-              {url.replace(/^https?:\/\/(www\.)?/, "")}
-            </p>
-            <span className="mt-2 inline-block bg-blue-600 group-hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-full shadow transition-colors">
-              View Recipe
-            </span>
-          </div>
-        </Link>
-      ))}
+          </Link>
+        ))}
+      </div>
     </div>
   </div>
 );

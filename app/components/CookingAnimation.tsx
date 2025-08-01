@@ -4,6 +4,14 @@ import Image from "next/image";
 import CookingAnimationLottie from "./CookingAnimationLottie";
 import { AudioNotifications } from "./AudioNotifications";
 import CookingAnimationPNG from "./CookingAnimationPNG";
+import { DM_Serif_Text, Playfair_Display, Roboto } from "next/font/google";
+
+const dmSerifText = DM_Serif_Text({ subsets: ["latin"], weight: ["400"] });
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+const roboto = Roboto({ subsets: ["latin"], weight: ["700", "700"] });
 
 interface Ingredient {
   name: string;
@@ -520,7 +528,9 @@ export default function CookingAnimation({
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
             />
           </svg>
-          <h2 className="text-2xl font-bold text-red-700 mb-2">
+          <h2
+            className={`${roboto.className} text-2xl font-bold text-red-700 mb-2`}
+          >
             Error Processing Recipe
           </h2>
           <p className="text-red-600 mb-4">{error}</p>
@@ -539,7 +549,7 @@ export default function CookingAnimation({
   if (isProcessing) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-500 border-t-transparent"></div>
         <p className="text-gray-600 text-lg font-medium">
           {currentLoadingMessage}
         </p>
@@ -548,13 +558,13 @@ export default function CookingAnimation({
   }
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen font-inter">
       <AudioNotifications
         isStepComplete={isStepComplete}
         isTimerComplete={isTimerComplete}
       />
-      <div className="w-full max-w-5xl mx-auto px-2 sm:px-8 py-4 sm:py-8 bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-xl">
-        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-blue-100 shadow-lg p-4 sm:p-6">
+      <div className="w-full max-w-5xl mx-auto px-2 sm:px-8 py-4 sm:py-8 bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-xl">
+        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-slate-100 shadow-lg p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row gap-6">
             <div className="flex-shrink-0 w-full sm:w-48 h-48 relative rounded-lg overflow-hidden">
               <Image
@@ -578,7 +588,9 @@ export default function CookingAnimation({
               />
             </div>
             <div className="flex-grow">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+              <h1
+                className={`${roboto.className} text-2xl sm:text-3xl font-bold text-gray-900 mb-2`}
+              >
                 {recipeData?.name || "Recipe"}
               </h1>
               <p className="text-gray-600 mb-4">
@@ -649,7 +661,7 @@ export default function CookingAnimation({
             </div>
           </div>
         </div>
-        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-blue-100 shadow-lg p-3 sm:p-4">
+        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-slate-100 shadow-lg p-3 sm:p-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
             <div className="flex items-center gap-2">
               <svg
@@ -673,8 +685,8 @@ export default function CookingAnimation({
                   onClick={() => handleServingsChange(0.5)}
                   className={`px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border-2 transition-colors ${
                     servingMultiplier === 0.5
-                      ? "border-blue-500 bg-blue-50 text-blue-700"
-                      : "border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-500"
+                      ? "border-slate-500 bg-slate-50 text-slate-700"
+                      : "border-gray-300 text-gray-600 hover:border-slate-500 hover:text-slate-500"
                   }`}
                   aria-label="Set servings to half"
                 >
@@ -684,8 +696,8 @@ export default function CookingAnimation({
                   onClick={() => handleServingsChange(1)}
                   className={`px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border-2 transition-colors ${
                     servingMultiplier === 1
-                      ? "border-blue-500 bg-blue-50 text-blue-700"
-                      : "border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-500"
+                      ? "border-slate-500 bg-slate-50 text-slate-700"
+                      : "border-gray-300 text-gray-600 hover:border-slate-500 hover:text-slate-500"
                   }`}
                   aria-label="Set servings to original"
                 >
@@ -695,8 +707,8 @@ export default function CookingAnimation({
                   onClick={() => handleServingsChange(2)}
                   className={`px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border-2 transition-colors ${
                     servingMultiplier === 2
-                      ? "border-blue-500 bg-blue-50 text-blue-700"
-                      : "border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-500"
+                      ? "border-slate-500 bg-slate-50 text-slate-700"
+                      : "border-gray-300 text-gray-600 hover:border-slate-500 hover:text-slate-500"
                   }`}
                   aria-label="Set servings to double"
                 >
@@ -709,16 +721,16 @@ export default function CookingAnimation({
             </div>
           </div>
         </div>
-        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-blue-100 shadow-lg overflow-hidden">
+        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-slate-100 shadow-lg overflow-hidden">
           <button
             onClick={() => setIsChecklistExpanded(!isChecklistExpanded)}
             className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
             aria-expanded={isChecklistExpanded}
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-50 rounded-lg">
+              <div className="p-2 bg-slate-50 rounded-lg">
                 <svg
-                  className="w-5 h-5 text-blue-600"
+                  className="w-5 h-5 text-slate-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -732,7 +744,9 @@ export default function CookingAnimation({
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3
+                  className={`${roboto.className} text-lg font-semibold text-gray-800`}
+                >
                   Recipe Ingredients
                 </h3>
                 <p className="text-sm text-gray-500 text-start">
@@ -787,7 +801,7 @@ export default function CookingAnimation({
           >
             <div className="p-4 pt-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-2">
-                {allIngredients.map((ingredient) => {
+                {allIngredients.map((ingredient, index) => {
                   const key = `${ingredient.name}-${ingredient.quantity}-${ingredient.unit}`;
                   const isNeededInCurrentStep = currentStepIngredients.has(key);
                   const originalQuantity = ingredient.quantity || 0;
@@ -796,12 +810,12 @@ export default function CookingAnimation({
 
                   return (
                     <div
-                      key={key}
+                      key={`${key}-${index}`}
                       className={`group relative flex items-start gap-3 p-3 rounded-lg transition-all cursor-pointer ${
                         checkedIngredients.has(key)
                           ? "bg-green-50 border border-green-200"
                           : isNeededInCurrentStep
-                          ? "bg-blue-50 border border-blue-200"
+                          ? "bg-slate-50 border border-slate-200"
                           : "bg-gray-50 border border-gray-200 hover:bg-gray-100"
                       }`}
                       onClick={() => toggleIngredient(ingredient)}
@@ -810,7 +824,7 @@ export default function CookingAnimation({
                         className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
                           checkedIngredients.has(key)
                             ? "bg-green-500 border-green-500"
-                            : "border-gray-300 group-hover:border-blue-500"
+                            : "border-gray-300 group-hover:border-slate-500"
                         }`}
                       >
                         {checkedIngredients.has(key) && (
@@ -875,7 +889,7 @@ export default function CookingAnimation({
                         {isNeededInCurrentStep &&
                           !checkedIngredients.has(key) && (
                             <div className="mt-1.5">
-                              <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium flex items-center gap-1">
+                              <span className="px-2 py-0.5 bg-slate-100 text-slate-800 rounded-full text-xs font-medium flex items-center gap-1">
                                 <svg
                                   className="w-3 h-3"
                                   fill="none"
@@ -901,16 +915,16 @@ export default function CookingAnimation({
             </div>
           </div>
         </div>
-        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-blue-100 shadow-lg overflow-hidden">
+        <div className="mb-4 sm:mb-6 bg-white rounded-xl border border-slate-100 shadow-lg overflow-hidden">
           <button
             onClick={() => setIsInstructionsExpanded(!isInstructionsExpanded)}
             className="w-full p-3 sm:p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
             aria-expanded={isInstructionsExpanded}
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-50 rounded-lg">
+              <div className="p-2 bg-slate-50 rounded-lg">
                 <svg
-                  className="w-5 h-5 text-blue-600"
+                  className="w-5 h-5 text-slate-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -924,7 +938,9 @@ export default function CookingAnimation({
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3
+                  className={`${roboto.className} text-lg font-semibold text-gray-800`}
+                >
                   Original Instructions
                 </h3>
                 <p className="text-sm text-gray-500 text-start">
@@ -963,7 +979,7 @@ export default function CookingAnimation({
                     key={index}
                     className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
                   >
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-medium">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-sm font-medium">
                       {index + 1}
                     </span>
                     <p className="text-sm text-gray-700">{instruction}</p>
@@ -973,7 +989,7 @@ export default function CookingAnimation({
             </div>
           </div>
         </div>
-        <div className="mb-6 bg-white p-4 rounded-xl border border-blue-100 shadow-lg">
+        <div className="mb-6 bg-white p-4 rounded-xl border border-slate-100 shadow-lg">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-lg font-semibold text-gray-800">
               Recipe Progress
@@ -989,7 +1005,7 @@ export default function CookingAnimation({
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
             <div
-              className="bg-blue-500 h-2.5 rounded-full transition-all duration-500"
+              className="bg-slate-500 h-2.5 rounded-full transition-all duration-500"
               style={{ width: `${overallProgress}%` }}
               role="progressbar"
               aria-valuenow={Math.round(overallProgress)}
@@ -1002,16 +1018,16 @@ export default function CookingAnimation({
             <span>{Math.round(overallProgress)}% Complete</span>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-blue-50 via-white to-blue-100 p-4 sm:p-8 rounded-xl border border-blue-200 shadow-xl">
+        <div className="bg-gradient-to-br from-slate-50 via-white to-slate-100 p-4 sm:p-8 rounded-xl border border-slate-200 shadow-xl">
           <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8">
-            <div className="flex-shrink-0 bg-gradient-to-br from-blue-100 via-white to-blue-200 p-3 sm:p-4 rounded-xl h-36 w-36 sm:h-48 sm:w-48 relative border border-blue-300">
+            <div className="flex-shrink-0 bg-gradient-to-br from-slate-100 via-white to-slate-200 p-3 sm:p-4 rounded-xl h-36 w-36 sm:h-48 sm:w-48 relative border border-slate-300">
               <CookingAnimationPNG
                 animationType={
                   processedSteps[currentStep]?.animationType || "waiting"
                 }
               ></CookingAnimationPNG>
-              <div className="absolute bottom-2 left-2 right-2 bg-blue-50/80 backdrop-blur-sm rounded-lg p-1.5 sm:p-2 text-center border border-blue-200">
-                <span className="text-xs sm:text-sm font-semibold text-blue-700">
+              <div className="absolute bottom-2 left-2 right-2 bg-slate-50/80 backdrop-blur-sm rounded-lg p-1.5 sm:p-2 text-center border border-slate-200">
+                <span className="text-xs sm:text-sm font-semibold text-slate-700">
                   {processedSteps[currentStep]?.animationType
                     ? processedSteps[currentStep].animationType
                         .charAt(0)
@@ -1024,7 +1040,7 @@ export default function CookingAnimation({
             <div className="flex-grow space-y-3 sm:space-y-4">
               <div className="flex items-center gap-2 sm:gap-3">
                 <span
-                  className="px-2 sm:px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm font-medium"
+                  className="px-2 sm:px-3 py-1 bg-slate-100 text-slate-800 rounded-full text-xs sm:text-sm font-medium"
                   aria-label={`Step ${currentStep + 1} of ${
                     processedSteps.length
                   }`}
@@ -1046,93 +1062,86 @@ export default function CookingAnimation({
                   </span>
                 )}
               </div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-800">
+              <h3
+                className={`${roboto.className} text-xl sm:text-2xl font-semibold text-gray-800`}
+              >
                 {currentStepData?.action}
               </h3>
-              {currentStepData?.ingredients && (
-                <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                  <h4 className="text-xs sm:text-sm font-medium text-gray-500 mb-3 flex items-center gap-2">
-                    <svg
-                      className="w-3 h-3 sm:w-4 sm:h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+              {/* Only show Ingredients Needed if there are ingredients for this step */}
+              {currentStepData?.ingredients &&
+                currentStepData.ingredients.length > 0 && (
+                  <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                    <h4
+                      className={`${roboto.className} text-xs sm:text-sm font-medium text-gray-500 mb-3 flex items-center gap-2`}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                      />
-                    </svg>
-                    Ingredients Needed
-                  </h4>
-                  <ul className="space-y-2">
-                    {currentStepData.ingredients.map((ingredient, index) => {
-                      const originalQuantity = ingredient.quantity || 0;
-                      const scaledQuantity =
-                        originalQuantity * (currentServings / servings);
-                      const key = `${ingredient.name}-${ingredient.quantity}-${ingredient.unit}`;
-                      const isChecked = checkedIngredients.has(key);
+                      Ingredients Needed
+                    </h4>
+                    <ul className="space-y-2">
+                      {currentStepData.ingredients.map((ingredient, index) => {
+                        const originalQuantity = ingredient.quantity || 0;
+                        const scaledQuantity =
+                          originalQuantity * (currentServings / servings);
+                        const key = `${ingredient.name}-${ingredient.quantity}-${ingredient.unit}`;
+                        const isChecked = checkedIngredients.has(key);
 
-                      return (
-                        <li
-                          key={index}
-                          className={`flex items-start gap-2 p-2 rounded-lg transition-colors ${
-                            isChecked ? "bg-green-50" : "bg-white"
-                          }`}
-                        >
-                          <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></span>
-                          <div className="flex-grow min-w-0">
-                            <div className="flex items-start justify-between gap-2">
-                              <div>
-                                <span
-                                  className={`block text-sm font-medium ${
-                                    isChecked
-                                      ? "text-gray-500 line-through"
-                                      : "text-gray-700"
-                                  }`}
-                                >
-                                  {ingredient.name}
-                                </span>
-                                {ingredient.preparation && (
-                                  <span className="text-xs text-gray-500">
-                                    {ingredient.preparation}
-                                  </span>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-1 flex-shrink-0">
-                                {ingredient.quantity && (
+                        return (
+                          <li
+                            key={`${key}-${index}`}
+                            className={`flex items-start gap-2 p-2 rounded-lg transition-colors ${
+                              isChecked ? "bg-green-50" : "bg-white"
+                            }`}
+                          >
+                            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-slate-400 rounded-full mt-2 flex-shrink-0"></span>
+                            <div className="flex-grow min-w-0">
+                              <div className="flex items-start justify-between gap-2">
+                                <div>
                                   <span
-                                    className={`text-sm font-medium ${
+                                    className={`block text-sm font-medium ${
                                       isChecked
-                                        ? "text-gray-500"
+                                        ? "text-gray-500 line-through"
                                         : "text-gray-700"
                                     }`}
                                   >
-                                    {formatQuantity(scaledQuantity)}
+                                    {ingredient.name}
                                   </span>
-                                )}
-                                {ingredient.unit && (
-                                  <span
-                                    className={`text-sm ${
-                                      isChecked
-                                        ? "text-gray-500"
-                                        : "text-gray-600"
-                                    }`}
-                                  >
-                                    {ingredient.unit}
-                                  </span>
-                                )}
+                                  {ingredient.preparation && (
+                                    <span className="text-xs text-gray-500">
+                                      {ingredient.preparation}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-1 flex-shrink-0">
+                                  {ingredient.quantity && (
+                                    <span
+                                      className={`text-sm font-medium ${
+                                        isChecked
+                                          ? "text-gray-500"
+                                          : "text-gray-700"
+                                      }`}
+                                    >
+                                      {formatQuantity(scaledQuantity)}
+                                    </span>
+                                  )}
+                                  {ingredient.unit && (
+                                    <span
+                                      className={`text-sm ${
+                                        isChecked
+                                          ? "text-gray-500"
+                                          : "text-gray-600"
+                                      }`}
+                                    >
+                                      {ingredient.unit}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
               {currentStepData?.temperature && (
                 <div className="flex items-center gap-2 text-gray-700 bg-gray-50 p-2 sm:p-3 rounded-lg">
                   <svg
@@ -1155,8 +1164,8 @@ export default function CookingAnimation({
                 </div>
               )}
               {currentStepData?.notes && (
-                <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
-                  <p className="text-sm sm:text-base text-blue-700 flex items-start gap-2">
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-lg">
+                  <p className="text-sm sm:text-base text-slate-700 flex items-start gap-2">
                     <svg
                       className="w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0"
                       fill="none"
@@ -1198,7 +1207,7 @@ export default function CookingAnimation({
                     </div>
                     <button
                       onClick={togglePause}
-                      className="px-2 sm:px-4 py-1.5 sm:py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md flex items-center gap-1 sm:gap-2 flex-1 justify-center"
+                      className="px-2 sm:px-4 py-1.5 sm:py-2 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors shadow-md flex items-center gap-1 sm:gap-2 flex-1 justify-center"
                       aria-label={isPaused ? "Resume timer" : "Pause timer"}
                     >
                       {isPaused ? (
@@ -1266,7 +1275,7 @@ export default function CookingAnimation({
                   </div>
                   <div className="mt-2 w-full bg-gray-200 rounded-full h-2 sm:h-2.5">
                     <div
-                      className="bg-blue-500 h-2 sm:h-2.5 rounded-full transition-all duration-1000 ease-linear"
+                      className="bg-slate-500 h-2 sm:h-2.5 rounded-full transition-all duration-1000 ease-linear"
                       style={{ width: `${progress}%` }}
                       role="progressbar"
                       aria-valuenow={Math.round(progress)}
@@ -1308,7 +1317,7 @@ export default function CookingAnimation({
                   className={`px-3 sm:px-6 py-1.5 sm:py-2 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-1 sm:gap-2 ${
                     currentStep === processedSteps.length - 1
                       ? "bg-green-500 hover:bg-green-600"
-                      : "bg-blue-500 hover:bg-blue-600"
+                      : "bg-slate-500 hover:bg-slate-600"
                   }`}
                   aria-label={
                     timeRemaining !== null && !isStepComplete
@@ -1357,43 +1366,70 @@ export default function CookingAnimation({
               </div>
             </div>
           </div>
-        </div>{" "}
-        <div className="space-y-2 sm:space-y-3 my-10">
-          {processedSteps.map((step, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{
-                opacity: currentStep === index ? 1 : 0.6,
-                y: 0,
-              }}
-              className={`p-3 sm:p-4 rounded-lg border transition-all cursor-pointer ${
-                currentStep === index
-                  ? "border-blue-500 bg-blue-50 shadow-md"
-                  : completedSteps.includes(index)
-                  ? "border-green-500 bg-green-50"
-                  : "border-gray-200 hover:border-blue-200"
-              }`}
-              role="button"
-              tabIndex={0}
-              onClick={() => startStep(index)}
-              onKeyPress={(e) => e.key === "Enter" && startStep(index)}
-              aria-label={`Step ${index + 1}: ${step.action}`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div
-                    className={`flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-sm sm:text-base ${
-                      currentStep === index
-                        ? "bg-blue-500 text-white"
-                        : completedSteps.includes(index)
-                        ? "bg-green-500 text-white"
-                        : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {completedSteps.includes(index) ? (
+          <div className="space-y-2 sm:space-y-3 my-10">
+            {processedSteps.map((step, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{
+                  opacity: currentStep === index ? 1 : 0.6,
+                  y: 0,
+                }}
+                className={`p-3 sm:p-4 rounded-lg border transition-all cursor-pointer ${
+                  currentStep === index
+                    ? "border-slate-500 bg-slate-50 shadow-md"
+                    : completedSteps.includes(index)
+                    ? "border-green-500 bg-green-50"
+                    : "border-gray-200 hover:border-slate-200"
+                }`}
+                role="button"
+                tabIndex={0}
+                onClick={() => startStep(index)}
+                onKeyPress={(e) => e.key === "Enter" && startStep(index)}
+                aria-label={`Step ${index + 1}: ${step.action}`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div
+                      className={`flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-sm sm:text-base ${
+                        currentStep === index
+                          ? "bg-slate-500 text-white"
+                          : completedSteps.includes(index)
+                          ? "bg-green-500 text-white"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {completedSteps.includes(index) ? (
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      ) : (
+                        index + 1
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-base sm:text-lg">{step.action}</p>
+                      {step.ingredients && step.ingredients.length > 0 && (
+                        <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                          {step.ingredients.map((i) => i.name).join(", ")}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {index === currentStep && timeRemaining !== null && (
+                    <div className="text-xs sm:text-sm text-gray-500 flex items-center gap-1.5 sm:gap-2">
                       <svg
-                        className="w-4 h-4"
+                        className="w-3 h-3 sm:w-4 sm:h-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -1402,43 +1438,16 @@ export default function CookingAnimation({
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M5 13l4 4L19 7"
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                    ) : (
-                      index + 1
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-base sm:text-lg">{step.action}</p>
-                    {step.ingredients && step.ingredients.length > 0 && (
-                      <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                        {step.ingredients.map((i) => i.name).join(", ")}
-                      </p>
-                    )}
-                  </div>
+                      {formattedTimeRemaining} remaining
+                    </div>
+                  )}
                 </div>
-                {index === currentStep && timeRemaining !== null && (
-                  <div className="text-xs sm:text-sm text-gray-500 flex items-center gap-1.5 sm:gap-2">
-                    <svg
-                      className="w-3 h-3 sm:w-4 sm:h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    {formattedTimeRemaining} remaining
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

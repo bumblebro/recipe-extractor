@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { DM_Serif_Text } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import Link from "next/link";
@@ -8,7 +9,8 @@ import Logo from "./components/Logo";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Navbar from "./components/Navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "700"] });
+const dmSerifText = DM_Serif_Text({ subsets: ["latin"], weight: ["400"] });
 
 export const viewport: Viewport = {
   themeColor: "#2563EB",
@@ -124,10 +126,13 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={inter.className}>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+      <body className={inter.className} style={{ backgroundColor: "#FEFEFF" }}>
+        <div className="min-h-screen" style={{ backgroundColor: "#FEFEFF" }}>
           <Navbar />
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <main
+            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+            style={{ backgroundColor: "#FEFEFF" }}
+          >
             {children}
           </main>
           <Footer />

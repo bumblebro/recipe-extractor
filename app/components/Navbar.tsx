@@ -17,7 +17,7 @@ export default function Navbar() {
           <div className="flex lg:hidden">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-slate-600 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-slate-500"
               aria-controls="mobile-menu"
               aria-expanded={menuOpen}
             >
@@ -52,21 +52,21 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center space-x-4">
             <Link
               href="/"
-              className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              className="text-gray-600 hover:text-slate-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               aria-label="Home Page"
             >
               Home
             </Link>
             <Link
               href="/about"
-              className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              className="text-gray-600 hover:text-slate-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               aria-label="About Us Page"
             >
               About
             </Link>
             <Link
               href="/"
-              className="ml-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-semibold shadow transition-colors"
+              className="ml-2 border border-slate-600 text-slate-600 px-4 py-2 rounded-md text-sm font-semibold shadow transition-colors bg-transparent hover:bg-slate-50"
               aria-label="Try your own recipe"
             >
               Try Your Recipe
@@ -80,7 +80,7 @@ export default function Navbar() {
           <div className="px-2 pt-2 pb-3 space-y-1 bg-white shadow-md rounded-b-xl">
             <Link
               href="/"
-              className="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium transition-colors"
+              className="block text-gray-700 hover:text-slate-600 px-3 py-2 rounded-md text-base font-medium transition-colors"
               aria-label="Home Page"
               onClick={() => setMenuOpen(false)}
             >
@@ -88,7 +88,7 @@ export default function Navbar() {
             </Link>
             <Link
               href="/about"
-              className="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium transition-colors"
+              className="block text-gray-700 hover:text-slate-600 px-3 py-2 rounded-md text-base font-medium transition-colors"
               aria-label="About Us Page"
               onClick={() => setMenuOpen(false)}
             >
@@ -96,7 +96,7 @@ export default function Navbar() {
             </Link>
             <Link
               href="/"
-              className="block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-base font-semibold shadow transition-colors mt-2"
+              className="block border border-slate-600 text-slate-600 px-4 py-2 rounded-md text-base font-semibold shadow transition-colors mt-2 bg-transparent hover:bg-slate-50"
               aria-label="Try your own recipe"
               onClick={() => setMenuOpen(false)}
             >

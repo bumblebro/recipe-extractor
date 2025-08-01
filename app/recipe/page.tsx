@@ -68,7 +68,7 @@ function RecipeContent() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-500 border-t-transparent"></div>
         <p className="text-gray-600 text-lg font-medium">Loading recipe...</p>
       </div>
     );
@@ -134,7 +134,7 @@ export default function RecipePage() {
     <Suspense
       fallback={
         <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-500 border-t-transparent"></div>
           <p className="text-gray-600 text-lg font-medium">Loading recipe...</p>
         </div>
       }

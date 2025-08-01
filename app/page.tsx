@@ -1,8 +1,10 @@
 "use client";
 
+import { Roboto } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import HowItWorks from "./components/HowItWorks";
+const roboto = Roboto({ subsets: ["latin"], weight: ["400", "700"] });
 
 interface RecipeData {
   name: string;
@@ -62,12 +64,12 @@ function RecipeForm() {
               onChange={(e) => setRecipeUrl(e.target.value)}
               placeholder="https://example.com/recipe"
               required
-              className="flex-1 min-w-0 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="flex-1 min-w-0 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-slate-500 focus:border-slate-500"
             />
             <button
               type="submit"
               disabled={isLoading}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
+              className="px-6 py-3 bg-slate-600 text-white rounded-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading ? (
                 <div className="flex items-center">
@@ -124,7 +126,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+    <main className="min-h-screen  ">
       <div className="space-y-8 ">
         {/* <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8 w-full">
           <div className="flex justify-center w-full">
@@ -199,10 +201,15 @@ export default function Home() {
           </div>
         </div> */}
         <div className="text-center mt-32">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1
+            className={`${roboto.className} text-4xl font-bold text-gray-900 mb-4`}
+          >
             Interactive Recipe Guide
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p
+            className="text-lg max-w-2xl mx-auto font-light"
+            style={{ color: "#828282" }}
+          >
             Enter a recipe URL below to get step-by-step cooking instructions
             with interactive animations and timers.
           </p>
