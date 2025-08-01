@@ -4,42 +4,73 @@ import RecipeClient from "./RecipeClient";
 
 // Map of slugs to recipe URLs
 const recipeLinks: Record<string, string> = {
-  "spaghetti-carbonara":
-    "https://www.simplyrecipes.com/recipes/spaghetti_alla_carbonara/",
-  "classic-pancakes":
-    "https://www.allrecipes.com/recipe/21014/good-old-fashioned-pancakes/",
-  "vegetable-stir-fry": "https://www.loveandlemons.com/vegetable-stir-fry/",
-  "chicken-noodle-soup":
-    "https://www.delish.com/cooking/recipe-ideas/a19665918/easy-chicken-noodle-soup-recipe/",
-  "chocolate-chip-cookies":
-    "https://sallysbakingaddiction.com/chocolate-chip-cookies/",
+  "chickpea-curry":
+    "https://savorytouch.com/dietary-preferences/vegetarian/chickpea-curry/chickpea-and-green-bean-curry:-a-flavorful-delight",
+  "lemon-herb-pasta-swordfish":
+    "https://savorytouch.com/meal-types/dinner/pasta-dishes/lemon-and-herb-pasta-with-swordfish",
+  "bourbon-bbq-chicken-wings":
+    "https://savorytouch.com/cooking-techniques/grilling/chicken-wings/bourbon-bbq-grilled-chicken-wings",
+  "lentil-shepherds-pie":
+    "https://savorytouch.com/recipe-formats/batch-cooking/meal-prepping/batch-building-brilliance:-lentil-shepherd's-pie",
+  "goat-cheese-fig-turkey-breast":
+    "https://savorytouch.com/seasonal-recipes/holiday/thanksgiving-turkey/goat-cheese-and-fig-stuffed-turkey-breast-with-balsamic-glaze",
+  "turkey-stuffed-mushrooms":
+    "https://savorytouch.com/seasonal-recipes/holiday/thanksgiving-turkey/turkey-and-stuffing-stuffed-mushrooms",
+  "seafood-bouillabaisse":
+    "https://savorytouch.com/cooking-techniques/saut%C3%A9ing/seafood/sauteed-seafood-bouillabaisse-with-saffron-broth-and-rouille",
+  "spicy-peanut-noodles-meatballs":
+    "https://savorytouch.com/modern-trends/plant-based/plant-based-meatballs/spicy-peanut-noodles-with-plant-based-meatballs",
+  "chocolate-fondue-anniversary":
+    "https://savorytouch.com/special-occasions/anniversary/chocolate-fondue/chocolate-fondue:-a-sweet-anniversary-memory",
 };
 
 const recipeMeta: Record<string, { title: string; description: string }> = {
-  "spaghetti-carbonara": {
-    title: "Spaghetti Carbonara – AI Step-by-Step Recipe Guide",
+  "chickpea-curry": {
+    title: "Chickpea & Green Bean Curry – AI Step-by-Step Guide",
     description:
-      "See how GuideMyRecipe breaks down spaghetti carbonara into clear kitchen actions, from prep to serve.",
+      "GuideMyRecipe breaks down chickpea and green bean curry into clear, kitchen-ready steps for a flavorful vegetarian delight.",
   },
-  "classic-pancakes": {
-    title: "Classic Pancakes – AI Step-by-Step Recipe Guide",
+  "lemon-herb-pasta-swordfish": {
+    title: "Lemon & Herb Pasta with Swordfish – AI Step-by-Step Guide",
     description:
-      "See how GuideMyRecipe transforms classic pancakes into easy, kitchen-ready steps.",
+      "GuideMyRecipe transforms lemon and herb pasta with swordfish into easy, step-by-step cooking actions for dinner.",
   },
-  "vegetable-stir-fry": {
-    title: "Vegetable Stir Fry – AI Step-by-Step Recipe Guide",
+  "bourbon-bbq-chicken-wings": {
+    title: "Bourbon BBQ Grilled Chicken Wings – AI Step-by-Step Guide",
     description:
-      "See how GuideMyRecipe simplifies vegetable stir fry into clear, timed instructions.",
+      "GuideMyRecipe simplifies bourbon BBQ grilled chicken wings into clear, timed instructions for perfect grilling.",
   },
-  "chicken-noodle-soup": {
-    title: "Chicken Noodle Soup – AI Step-by-Step Recipe Guide",
+  "lentil-shepherds-pie": {
+    title: "Lentil Shepherd's Pie – AI Step-by-Step Guide",
     description:
-      "See how GuideMyRecipe turns chicken noodle soup into simple, step-by-step cooking actions.",
+      "GuideMyRecipe turns batch-building brilliance: lentil shepherd's pie into simple, step-by-step meal prepping actions.",
   },
-  "chocolate-chip-cookies": {
-    title: "Chocolate Chip Cookies – AI Step-by-Step Recipe Guide",
+  "goat-cheese-fig-turkey-breast": {
+    title: "Goat Cheese & Fig Stuffed Turkey Breast – AI Step-by-Step Guide",
     description:
-      "See how GuideMyRecipe breaks down chocolate chip cookies into easy baking steps.",
+      "GuideMyRecipe breaks down goat cheese and fig stuffed turkey breast with balsamic glaze into easy holiday cooking steps.",
+  },
+  "turkey-stuffed-mushrooms": {
+    title: "Turkey & Stuffing Stuffed Mushrooms – AI Step-by-Step Guide",
+    description:
+      "GuideMyRecipe transforms turkey and stuffing stuffed mushrooms into simple, step-by-step holiday appetizer instructions.",
+  },
+  "seafood-bouillabaisse": {
+    title: "Sauteed Seafood Bouillabaisse – AI Step-by-Step Guide",
+    description:
+      "GuideMyRecipe breaks down sauteed seafood bouillabaisse with saffron broth and rouille into clear, kitchen-ready steps.",
+  },
+  "spicy-peanut-noodles-meatballs": {
+    title:
+      "Spicy Peanut Noodles with Plant-Based Meatballs – AI Step-by-Step Guide",
+    description:
+      "GuideMyRecipe simplifies spicy peanut noodles with plant-based meatballs into easy, step-by-step cooking actions.",
+  },
+  "chocolate-fondue-anniversary": {
+    title:
+      "Chocolate Fondue – A Sweet Anniversary Memory – AI Step-by-Step Guide",
+    description:
+      "GuideMyRecipe turns chocolate fondue into a sweet, step-by-step anniversary treat for special occasions.",
   },
 };
 

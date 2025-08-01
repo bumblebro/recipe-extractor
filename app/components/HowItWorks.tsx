@@ -44,15 +44,24 @@ interface UsageExample {
 }
 
 const recipeLinks: Record<string, string> = {
-  "spaghetti-carbonara":
-    "https://www.simplyrecipes.com/recipes/spaghetti_alla_carbonara/",
-  "classic-pancakes":
-    "https://www.allrecipes.com/recipe/21014/good-old-fashioned-pancakes/",
-  "vegetable-stir-fry": "https://www.loveandlemons.com/vegetable-stir-fry/",
-  "chicken-noodle-soup":
-    "https://www.delish.com/cooking/recipe-ideas/a19665918/easy-chicken-noodle-soup-recipe/",
-  "chocolate-chip-cookies":
-    "https://sallysbakingaddiction.com/chocolate-chip-cookies/",
+  "chickpea-curry":
+    "https://savorytouch.com/dietary-preferences/vegetarian/chickpea-curry/chickpea-and-green-bean-curry:-a-flavorful-delight",
+  "lemon-herb-pasta-swordfish":
+    "https://savorytouch.com/meal-types/dinner/pasta-dishes/lemon-and-herb-pasta-with-swordfish",
+  "bourbon-bbq-chicken-wings":
+    "https://savorytouch.com/cooking-techniques/grilling/chicken-wings/bourbon-bbq-grilled-chicken-wings",
+  "lentil-shepherds-pie":
+    "https://savorytouch.com/recipe-formats/batch-cooking/meal-prepping/batch-building-brilliance:-lentil-shepherd's-pie",
+  "goat-cheese-fig-turkey-breast":
+    "https://savorytouch.com/seasonal-recipes/holiday/thanksgiving-turkey/goat-cheese-and-fig-stuffed-turkey-breast-with-balsamic-glaze",
+  "turkey-stuffed-mushrooms":
+    "https://savorytouch.com/seasonal-recipes/holiday/thanksgiving-turkey/turkey-and-stuffing-stuffed-mushrooms",
+  "seafood-bouillabaisse":
+    "https://savorytouch.com/cooking-techniques/saut%C3%A9ing/seafood/sauteed-seafood-bouillabaisse-with-saffron-broth-and-rouille",
+  "spicy-peanut-noodles-meatballs":
+    "https://savorytouch.com/modern-trends/plant-based/plant-based-meatballs/spicy-peanut-noodles-with-plant-based-meatballs",
+  "chocolate-fondue-anniversary":
+    "https://savorytouch.com/special-occasions/anniversary/chocolate-fondue/chocolate-fondue:-a-sweet-anniversary-memory",
 };
 
 const steps: Step[] = [

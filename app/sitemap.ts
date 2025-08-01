@@ -37,5 +37,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
+  const recipeSlugs = [
+    "chickpea-curry",
+    "lemon-herb-pasta-swordfish",
+    "bourbon-bbq-chicken-wings",
+    "lentil-shepherds-pie",
+    "goat-cheese-fig-turkey-breast",
+    "turkey-stuffed-mushrooms",
+    "seafood-bouillabaisse",
+    "spicy-peanut-noodles-meatballs",
+    "chocolate-fondue-anniversary",
+  ];
+
+  // Add dynamic recipe example pages
+  recipeSlugs.forEach((slug) => {
+    routes.push({
+      url: `${baseUrl}/examples/recipe/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    });
+  });
+
   return routes;
 }
