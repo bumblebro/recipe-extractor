@@ -460,23 +460,23 @@ const renderSection = (
 ) => {
   const sectionStyles = {
     steps: {
-      container: "bg-gradient-to-br from-blue-50 to-white",
+      container: "bg-gradient-to-br from-slate-50 to-white",
       card: "bg-white rounded-xl shadow-lg p-8 h-full transform hover:scale-105 transition-all duration-300",
-      icon: "flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full",
-      iconColor: "text-blue-600",
+      icon: "flex items-center justify-center w-20 h-20 bg-slate-100 rounded-full",
+      iconColor: "text-slate-600",
       layout: "flex flex-col md:flex-row items-center gap-8",
       textAlign: "text-center md:text-left",
     },
     features: {
       container: "bg-white",
-      card: "bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-lg p-8 h-full transform hover:scale-105 transition-all duration-300",
-      icon: "flex items-center justify-center w-16 h-16 bg-blue-600 rounded-lg",
+      card: "bg-gradient-to-br from-slate-50 to-white rounded-xl shadow-lg p-8 h-full transform hover:scale-105 transition-all duration-300",
+      icon: "flex items-center justify-center w-16 h-16 bg-slate-600 rounded-lg",
       iconColor: "text-white",
       layout: "flex flex-col items-center text-center gap-6",
       textAlign: "text-center",
     },
     benefits: {
-      container: "bg-gradient-to-br from-blue-600 to-blue-800",
+      container: "bg-gradient-to-br from-slate-600 to-slate-800",
       card: "bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-8 h-full transform hover:scale-105 transition-all duration-300",
       icon: "flex items-center justify-center w-16 h-16 bg-white/20 rounded-full",
       iconColor: "text-white",
@@ -506,7 +506,7 @@ const renderSection = (
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
             className={`text-xl max-w-3xl mx-auto ${
-              type === "benefits" ? "text-blue-100" : "text-gray-600"
+              type === "benefits" ? "text-slate-100" : "text-gray-600"
             }`}
           >
             {description}
@@ -553,7 +553,7 @@ const renderSection = (
                     </h3>
                     <p
                       className={`text-lg ${
-                        type === "benefits" ? "text-blue-100" : "text-gray-600"
+                        type === "benefits" ? "text-slate-100" : "text-gray-600"
                       }`}
                     >
                       {item.description}
@@ -570,7 +570,7 @@ const renderSection = (
 };
 
 const renderUsageGuide = () => (
-  <div className="py-16 bg-gradient-to-br from-blue-50 to-white">
+  <div className="py-16 bg-gradient-to-br from-slate-50 to-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-16">
         <motion.h2
@@ -603,10 +603,10 @@ const renderUsageGuide = () => (
           >
             <div className="flex flex-col items-center text-center gap-4">
               <div className="relative">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <div className="text-blue-600">{example.icon}</div>
+                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
+                  <div className="text-slate-600">{example.icon}</div>
                 </div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-slate-600 rounded-full flex items-center justify-center text-white font-bold">
                   {index + 1}
                 </div>
               </div>
@@ -616,7 +616,7 @@ const renderUsageGuide = () => (
               <p className="text-gray-600">{example.description}</p>
               <div className="w-full mt-4">
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <code className="text-sm text-blue-600 break-all">
+                  <code className="text-sm text-slate-600 break-all">
                     {example.example}
                   </code>
                 </div>
@@ -632,7 +632,7 @@ const renderUsageGuide = () => (
         transition={{ delay: 0.6 }}
         className="mt-12 text-center"
       >
-        <div className="inline-block bg-blue-50 rounded-lg p-6 max-w-2xl">
+        <div className="inline-block bg-slate-50 rounded-lg p-6 max-w-2xl">
           <h4 className="text-lg font-semibold text-gray-900 mb-2">
             Quick Tip
           </h4>
@@ -647,13 +647,13 @@ const renderUsageGuide = () => (
 );
 
 const featuredrecipes = () => (
-  <div className="mt-16 py-16 bg-gradient-to-br from-blue-50 to-white">
+  <div className="mt-16 py-16 bg-gradient-to-br from-slate-50 to-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl font-bold text-blue-800 mb-4 tracking-tight drop-shadow-sm">
+        <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-4 tracking-tight drop-shadow-sm">
           More Featured Recipes
         </h2>
-        <p className="text-lg text-blue-700 max-w-2xl mx-auto font-light">
+        <p className="text-lg text-slate-700 max-w-2xl mx-auto font-light">
           Explore a variety of delicious recipes curated for you. Click any
           recipe to view its interactive guide!
         </p>
@@ -663,11 +663,11 @@ const featuredrecipes = () => (
           <Link
             key={slug}
             href={`/examples/recipe/${slug}`}
-            className="group block bg-white rounded-2xl shadow-lg hover:shadow-2xl border border-blue-100 p-6 transition-all duration-300 hover:-translate-y-1 transform hover:scale-105"
+            className="group block bg-white rounded-2xl shadow-lg hover:shadow-2xl border border-slate-100 p-6 transition-all duration-300 hover:-translate-y-1 transform hover:scale-105"
           >
             <div className="flex flex-col items-center text-center gap-4">
               <div className="relative">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center shadow-inner">
+                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center shadow-inner">
                   <span className="text-3xl select-none">
                     {idx === 0 && "🍝"}
                     {idx === 1 && "🥞"}
@@ -677,13 +677,13 @@ const featuredrecipes = () => (
                   </span>
                 </div>
               </div>
-              <h3 className="text-lg font-bold text-blue-700 mb-1 capitalize group-hover:text-blue-900 transition-colors">
+              <h3 className="text-lg font-bold text-slate-700 mb-1 capitalize group-hover:text-slate-900 transition-colors">
                 {slug.replace(/-/g, " ")}
               </h3>
               <p className="text-xs text-gray-500 text-center truncate w-full mb-2 font-light">
                 {url.replace(/^https?:\/\/(www\.)?/, "")}
               </p>
-              <span className="mt-2 inline-block border border-blue-600 text-blue-600 bg-white group-hover:bg-blue-50 text-xs font-semibold px-4 py-2 rounded-full shadow transition-colors">
+              <span className="mt-2 inline-block border border-slate-600 text-slate-600 bg-white group-hover:bg-slate-50 text-xs font-semibold px-4 py-2 rounded-full shadow transition-colors">
                 View Recipe
               </span>
             </div>
@@ -723,14 +723,14 @@ const renderStats = () => (
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-blue-50 rounded-xl p-6 text-center transform hover:scale-105 transition-all duration-300"
+            className="bg-slate-50 rounded-xl p-6 text-center transform hover:scale-105 transition-all duration-300"
           >
             <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <div className="text-blue-600">{stat.icon}</div>
+              <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
+                <div className="text-slate-600">{stat.icon}</div>
               </div>
             </div>
-            <div className="text-4xl font-bold text-blue-600 mb-2">
+            <div className="text-4xl font-bold text-slate-600 mb-2">
               {stat.value}
             </div>
             <div className="text-gray-600 font-medium">{stat.label}</div>
@@ -745,7 +745,7 @@ const renderStats = () => (
 );
 
 const renderTestimonials = () => (
-  <div className="py-16 bg-gradient-to-br from-blue-50 to-white">
+  <div className="py-16 bg-gradient-to-br from-slate-50 to-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-16">
         <motion.h2
@@ -806,7 +806,7 @@ const renderTestimonials = () => (
 
 export default function HowItWorks() {
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-white">
+    <div className="bg-gradient-to-br from-slate-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {renderUsageGuide()}
         {featuredrecipes()}
@@ -844,7 +844,7 @@ export default function HowItWorks() {
         >
           <a
             href="#"
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300"
+            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-slate-600 hover:bg-slate-700 transition-colors duration-300"
           >
             Get Started
             <svg
